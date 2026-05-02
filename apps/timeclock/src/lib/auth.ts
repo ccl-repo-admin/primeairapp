@@ -70,6 +70,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           roleId: user.role.id,
           roleName: user.role.name,
           jobType: user.jobType,
+          payType: user.payType,
           permissions: {
             hubAccess: user.role.hubAccess,
             timeclockAccess: user.role.timeclockAccess,

@@ -8,6 +8,7 @@ declare module "next-auth" {
       roleId: string;
       roleName: string;
       jobType: string;
+      payType: string;
       permissions: {
         hubAccess: boolean;
         timeclockAccess: boolean;

@@ -5,7 +5,13 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["DATABASE_URL", "DIRECT_URL", "AUTH_SECRET", "AUTH_URL", "NEXT_PUBLIC_TIMECLOCK_URL", "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY"]
+      "env": [
+        "DATABASE_URL", "DIRECT_URL", "AUTH_SECRET", "AUTH_URL",
+        "NEXT_PUBLIC_TIMECLOCK_URL", "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
+        "FEATURE_TIMECARDS", "FEATURE_WORK_ORDERS", "FEATURE_CUSTOMER_CRM",
+        "FEATURE_REPORTS", "FEATURE_PURCHASE_ORDERS", "FEATURE_ESTIMATES",
+        "FEATURE_INVOICING", "FEATURE_DISPATCH", "FEATURE_INVENTORY"
+      ]
     },
     "dev": {
       "cache": false,

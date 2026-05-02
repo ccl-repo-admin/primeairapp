@@ -211,6 +211,13 @@ enum IntegrationStatus {
   PENDING
 }
 
+enum POStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETE
+  CANCELLED
+}
+
 enum TaskStatus {
   TODO
   IN_PROGRESS
@@ -292,6 +299,7 @@ model Company {
   chatChannels    ChatChannel[]
   timeOffPolicies TimeOffPolicy[]
   integrations    Integration[]
+  purchaseOrders  PurchaseOrder[]
 
   @@index([slug])
 }
@@ -406,12 +414,14 @@ model TimeEntry {
   companyId   String
   userId      String
   user        User    @relation(fields: [userId], references: [id])
-  workOrderId String?
-  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
-  projectId   String?
-  project     Project?   @relation(fields: [projectId], references: [id])
-  costCodeId  String?
-  costCode    CostCode?  @relation(fields: [costCodeId], references: [id])
+  workOrderId     String?
+  workOrder       WorkOrder?     @relation(fields: [workOrderId], references: [id])
+  projectId       String?
+  project         Project?       @relation(fields: [projectId], references: [id])
+  costCodeId      String?
+  costCode        CostCode?      @relation(fields: [costCodeId], references: [id])
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
 
   clockInAt  DateTime
   clockOutAt DateTime?
@@ -541,6 +551,34 @@ model TimeOffRequest {
 }
 
 // ─────────────────────────────────────
+// PURCHASE ORDERS
+// ─────────────────────────────────────
+
+model PurchaseOrder {
+  id          String    @id @default(cuid())
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
+  number      String
+  description String?
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  status      POStatus  @default(OPEN)
+  issuedAt    DateTime?
+  dueAt       DateTime?
+  amount      Decimal?  @db.Decimal(10, 2)
+  fileUrl     String?
+  notes       String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  timeEntries TimeEntry[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+}
+
+// ─────────────────────────────────────
 // CUSTOMERS & ASSETS
 // ─────────────────────────────────────
 
@@ -581,6 +619,7 @@ model Customer {
   invoices       Invoice[]
   agreements     ServiceAgreement[]
   communications CustomerCommunication[]
+  purchaseOrders PurchaseOrder[]
 
   @@index([companyId, lastName])
   @@index([companyId, phone])

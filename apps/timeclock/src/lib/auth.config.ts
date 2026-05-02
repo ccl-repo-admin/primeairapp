@@ -24,6 +24,7 @@ export const authConfig = {
         token.roleId = (user as { roleId: string }).roleId;
         token.roleName = (user as { roleName: string }).roleName;
         token.jobType = (user as { jobType: string }).jobType;
+        token.payType = (user as { payType: string }).payType;
         token.permissions = (user as { permissions: unknown }).permissions;
       }
       return token;
@@ -34,6 +35,7 @@ export const authConfig = {
       session.user.roleId = token.roleId as string;
       session.user.roleName = token.roleName as string;
       session.user.jobType = token.jobType as string;
+      session.user.payType = token.payType as string;
       session.user.permissions = token.permissions as Session["user"]["permissions"];
       return session;
     },

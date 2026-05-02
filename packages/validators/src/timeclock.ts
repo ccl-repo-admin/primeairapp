@@ -6,6 +6,7 @@ export const clockInSchema = z.object({
   workOrderId: z.string().min(1).optional().nullable(),
   projectId: z.string().min(1).optional().nullable(),
   costCodeId: z.string().min(1).optional().nullable(),
+  purchaseOrderId: z.string().min(1).optional().nullable(),
   note: z.string().max(500).optional().nullable(),
   clockInPhotoUrl: z.string().url().optional().nullable(),
   manualAddress: z.string().max(500).optional().nullable(),

@@ -12,6 +12,7 @@ import {
   editTimeEntrySchema,
   listEntriesSchema,
 } from "@primeair/validators";
+import { features } from "../features";
 
 export const timeclockRouter = createTRPCRouter({
   getActiveEntry: protectedProcedure.query(async ({ ctx }) => {
@@ -29,12 +30,48 @@ export const timeclockRouter = createTRPCRouter({
     });
   }),
 
+  getCompanyModules: protectedProcedure.query(() => {
+    return features;
+  }),
+
+  listOpenPOs: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.purchaseOrder.findMany({
+      where: { companyId: ctx.companyId!, status: "OPEN" },
+      select: { id: true, number: true, description: true, customer: { select: { firstName: true, lastName: true, companyName: true } }, dueAt: true, amount: true },
+      orderBy: { number: "asc" },
+    });
+  }),
+
   clockIn: protectedProcedure.input(clockInSchema).mutation(async ({ ctx, input }) => {
     const existing = await ctx.db.timeEntry.findFirst({
       where: { userId: ctx.userId, companyId: ctx.companyId, status: "ACTIVE" },
     });
     if (existing) {
       throw new TRPCError({ code: "CONFLICT", message: "Already clocked in" });
+    }
+
+    // Enforce PO selection for field workers when PO feature is enabled
+    if (features.purchaseOrders) {
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.userId! },
+        select: { jobType: true, payType: true },
+      });
+      const isFieldWorker = user?.jobType === "SERVICE_TECH" || user?.jobType === "INSTALLER";
+      const isHourly = user?.payType === "HOURLY";
+      if (isFieldWorker && isHourly) {
+        if (!input.purchaseOrderId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You must select a work order / PO before clocking in.",
+          });
+        }
+        const po = await ctx.db.purchaseOrder.findFirst({
+          where: { id: input.purchaseOrderId, companyId: ctx.companyId!, status: "OPEN" },
+        });
+        if (!po) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Selected PO not found or already closed." });
+        }
+      }
     }
 
     // Check daily / weekly hour limits
@@ -99,6 +136,7 @@ export const timeclockRouter = createTRPCRouter({
         workOrderId: input.workOrderId ?? null,
         projectId: input.projectId ?? null,
         costCodeId: input.costCodeId ?? null,
+        purchaseOrderId: input.purchaseOrderId ?? null,
         clockInAt: new Date(),
         clockInLat: input.lat ?? null,
         clockInLng: input.lng ?? null,
