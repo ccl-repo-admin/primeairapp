@@ -103,6 +103,7 @@ export const timeclockRouter = createTRPCRouter({
         clockInLat: input.lat ?? null,
         clockInLng: input.lng ?? null,
         clockInPhoto: input.clockInPhotoUrl ?? null,
+        clockInAddress: input.manualAddress ?? null,
         note: input.note ?? null,
         status: "ACTIVE",
       },

@@ -8,6 +8,7 @@ export const clockInSchema = z.object({
   costCodeId: z.string().min(1).optional().nullable(),
   note: z.string().max(500).optional().nullable(),
   clockInPhotoUrl: z.string().url().optional().nullable(),
+  manualAddress: z.string().max(500).optional().nullable(),
 });
 
 export const clockOutSchema = z.object({

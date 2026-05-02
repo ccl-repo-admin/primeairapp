@@ -424,9 +424,10 @@ model TimeEntry {
 
   status TimeEntryStatus @default(ACTIVE)
 
-  clockInLat   Float?
-  clockInLng   Float?
-  clockInPhoto String?
+  clockInLat     Float?
+  clockInLng     Float?
+  clockInPhoto   String?
+  clockInAddress String?
 
   signedOffAt     DateTime?
   signedOffByTech Boolean   @default(false)
