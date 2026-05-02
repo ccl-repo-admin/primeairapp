@@ -73,7 +73,7 @@ export default function LoginPage() {
           </form>
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Field technicians:{" "}
-            <a href="http://localhost:3001" className="text-secondary hover:underline">
+            <a href={process.env.NEXT_PUBLIC_TIMECLOCK_URL ?? "http://localhost:3001"} className="text-secondary hover:underline">
               use the Timeclock app
             </a>
           </p>
