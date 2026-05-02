@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Air — UI Mockups</title>
+<style>
+  :root {
+    --navy:   #1B3A6B;
+    --teal:   #0891B2;
+    --teal-l: #E0F2FE;
+    --orange: #F97316;
+    --green:  #16A34A;
+    --red:    #DC2626;
+    --yellow: #D97706;
+    --gray-50:#F9FAFB;
+    --gray-100:#F3F4F6;
+    --gray-200:#E5E7EB;
+    --gray-300:#D1D5DB;
+    --gray-400:#9CA3AF;
+    --gray-500:#6B7280;
+    --gray-700:#374151;
+    --gray-900:#111827;
+    --white:  #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0F172A; color: var(--gray-900); }
+
+  /* ── NAV ── */
+  .site-nav {
+    background: var(--navy); color: white;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 28px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  .site-nav .logo { font-size: 20px; font-weight: 800; color: white; margin-right: 8px; }
+  .site-nav .logo span { color: var(--teal); }
+  .site-nav a {
+    color: rgba(255,255,255,.75); text-decoration: none; font-size: 13px;
+    padding: 6px 12px; border-radius: 6px; transition: background .15s;
+  }
+  .site-nav a:hover, .site-nav a.active { background: rgba(255,255,255,.15); color: white; }
+  .site-nav .spacer { flex: 1; }
+  .site-nav .badge { background: var(--teal); color: white; font-size: 11px;
+    font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+
+  /* ── SECTION HEADERS ── */
+  .section-label {
+    text-align: center; padding: 48px 24px 24px;
+    color: rgba(255,255,255,.5); font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .section-title {
+    text-align: center; color: white; font-size: 28px;
+    font-weight: 800; margin-bottom: 8px;
+  }
+  .section-sub { text-align: center; color: rgba(255,255,255,.5);
+    font-size: 15px; margin-bottom: 40px; }
+
+  /* ── MOCKUP GRID ── */
+  .grid { display: flex; flex-wrap: wrap; gap: 40px;
+    justify-content: center; padding: 0 24px 64px; }
+
+  /* ── PHONE FRAME ── */
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .phone-label { color: rgba(255,255,255,.6); font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; }
+  .phone {
+    width: 375px; height: 812px; background: white; border-radius: 50px;
+    border: 10px solid #1C1C1E; overflow: hidden; position: relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,.7), inset 0 0 0 2px #3A3A3C;
+    flex-shrink: 0;
+  }
+  .phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 150px; height: 32px; background: #1C1C1E; border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+  .phone-screen { height: 100%; overflow: hidden; }
+
+  /* ── DESKTOP FRAME ── */
+  .desktop-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .desktop-label { color: rgba(255,255,255,.6); font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; }
+  .desktop {
+    width: 1100px; background: white; border-radius: 12px;
+    border: 10px solid #1C1C1E; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.7);
+    flex-shrink: 0;
+  }
+  .desktop-bar {
+    background: #2A2A2E; height: 32px; display: flex; align-items: center;
+    padding: 0 12px; gap: 8px;
+  }
+  .desktop-bar .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .desktop-bar .dot.r { background: #FF5F57; }
+  .desktop-bar .dot.y { background: #FEBC2E; }
+  .desktop-bar .dot.g { background: #28C840; }
+  .desktop-bar .url {
+    flex: 1; background: #3A3A3E; height: 20px; border-radius: 4px;
+    margin: 0 12px; display: flex; align-items: center; padding: 0 8px;
+    color: rgba(255,255,255,.5); font-size: 11px;
+  }
+
+  /* ── SHARED UI PIECES ── */
+  .status-bar {
+    background: var(--navy); color: white; height: 44px;
+    display: flex; align-items: center; padding: 0 24px;
+    font-size: 15px; font-weight: 600; justify-content: space-between;
+    padding-top: 12px;
+  }
+  .status-bar .time { font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 6px; font-size: 12px; align-items: center; }
+
+  .tab-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: white; border-top: 1px solid var(--gray-200);
+    display: flex; height: 83px; padding-bottom: 20px;
+  }
+  .tab-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 3px; color: var(--gray-400);
+    font-size: 10px; font-weight: 500; cursor: pointer;
+  }
+  .tab-item.active { color: var(--teal); }
+  .tab-item svg { width: 24px; height: 24px; }
+  .tab-icon { font-size: 22px; }
+
+  .badge-dot {
+    width: 18px; height: 18px; background: var(--orange); border-radius: 50%;
+    color: white; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; top: -4px; right: -4px;
+  }
+
+  .card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden;
+  }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  }
+  .pill.green  { background: #DCFCE7; color: #15803D; }
+  .pill.blue   { background: #DBEAFE; color: #1D4ED8; }
+  .pill.yellow { background: #FEF3C7; color: #92400E; }
+  .pill.red    { background: #FEE2E2; color: #991B1B; }
+  .pill.gray   { background: var(--gray-100); color: var(--gray-500); }
+  .pill.teal   { background: #CFFAFE; color: #0E7490; }
+  .pill.orange { background: #FFEDD5; color: #C2410C; }
+
+  /* ── ADMIN SIDEBAR ── */
+  .admin-layout { display: flex; height: 100%; }
+  .sidebar {
+    width: 220px; background: var(--navy); color: white;
+    display: flex; flex-direction: column; padding: 0; flex-shrink: 0;
+  }
+  .sidebar-logo {
+    padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.1);
+    font-size: 18px; font-weight: 800;
+  }
+  .sidebar-logo span { color: var(--teal); }
+  .sidebar-section { font-size: 10px; color: rgba(255,255,255,.4);
+    letter-spacing: 2px; text-transform: uppercase; padding: 16px 18px 6px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 18px; font-size: 13px; color: rgba(255,255,255,.75);
+    cursor: pointer; border-radius: 0;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,.08); }
+  .sidebar-item.active { background: rgba(8,145,178,.25); color: white; border-right: 3px solid var(--teal); }
+  .sidebar-icon { font-size: 15px; width: 20px; text-align: center; }
+
+  .admin-main { flex: 1; background: var(--gray-50); overflow: hidden;
+    display: flex; flex-direction: column; }
+  .admin-topbar {
+    background: white; border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px; display: flex; align-items: center; gap: 12px;
+  }
+  .admin-topbar .page-title { font-size: 18px; font-weight: 700; color: var(--navy); flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: none; white-space: nowrap;
+  }
+  .btn-primary { background: var(--teal); color: white; }
+  .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-300); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .admin-content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+  /* helpers */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .gap-4 { gap: 16px; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .text-gray { color: var(--gray-500); }
+  .text-navy { color: var(--navy); }
+  .text-teal { color: var(--teal); }
+  .font-bold { font-weight: 700; }
+  .font-semibold { font-weight: 600; }
+  .mb-2 { margin-bottom: 8px; }
+  .mb-3 { margin-bottom: 12px; }
+  .mb-4 { margin-bottom: 16px; }
+  .mt-2 { margin-top: 8px; }
+  .p-3 { padding: 12px; }
+  .p-4 { padding: 16px; }
+  .rounded { border-radius: 8px; }
+  .rounded-lg { border-radius: 12px; }
+  .bg-gray { background: var(--gray-50); }
+  .bg-teal-l { background: var(--teal-l); }
+  .w-full { width: 100%; }
+  .divider { border: none; border-top: 1px solid var(--gray-200); margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<!-- ─────────────── NAV ─────────────── -->
+<nav class="site-nav">
+  <div class="logo">Prime<span>Air</span></div>
+  <a href="#mobile" class="active">📱 Mobile App</a>
+  <a href="#web">🖥 Web Admin</a>
+  <a href="#dispatch">📡 Dispatch</a>
+  <a href="#workorder">📋 Work Orders</a>
+  <a href="#invoicing">💳 Invoicing</a>
+  <a href="#reports">📊 Reports</a>
+  <div class="spacer"></div>
+  <span class="badge">UI Mockups v1.0</span>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════
+     MOBILE APP SCREENS
+══════════════════════════════════════════════════════ -->
+<div id="mobile">
+  <p class="section-label">Mobile Application</p>
+  <h2 class="section-title">Field Technician App</h2>
+  <p class="section-sub">iOS & Android — built for speed in the field</p>
+
+  <div class="grid">
+
+    <!-- ── SCREEN 1: Home / Clock In ── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#F9FAFB;">
+
+          <!-- Status bar -->
+          <div class="status-bar">
+            <span class="time">9:41</span>
+            <span class="icons">●●●● WiFi ▊</span>
+          </div>
+
+          <!-- Header -->
+          <div style="background:var(--navy);padding:16px 20px 20px;color:white;">
+            <div style="font-size:12px;opacity:.7;margin-bottom:2px;">Good morning,</div>
+            <div style="font-size:20px;font-weight:800;">Marcus Johnson 👋</div>
+            <div style="font-size:12px;opacity:.6;margin-top:4px;">Thursday, April 30 · Not clocked in</div>
+          </div>
+
+          <!-- Clock In Button -->
+          <div style="background:var(--navy);padding:0 20px 28px;">
+            <div style="background:var(--teal);border-radius:16px;padding:28px;text-align:center;
+                        box-shadow:0 8px 24px rgba(8,145,178,.5);">
+              <div style="font-size:48px;margin-bottom:8px;">⏱</div>
+              <div style="font-size:22px;font-weight:800;color:white;">Clock In</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;">Tap to start your shift</div>
+            </div>
+          </div>
+
+          <!-- Today's Jobs -->
+          <div style="padding:16px 20px 0;">
+            <div class="flex justify-between items-center mb-3">
+              <div style="font-size:15px;font-weight:700;color:var(--navy);">Today's Jobs</div>
+              <div style="font-size:12px;color:var(--teal);font-weight:600;">3 assigned</div>
+            </div>
+
+            <!-- Job Card 1 -->
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:10px;
+                        border-left:4px solid var(--teal);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+              <div class="flex justify-between items-center mb-2">
+                <span class="pill blue">Scheduled · 10:00 AM</span>
+                <span style="font-size:11px;color:var(--gray-400);">WO-2241</span>
+              </div>
+              <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:2px;">Smith Residence</div>
+              <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">AC Tune-Up · 4521 Oak St, Dallas TX</div>
+              <div class="flex gap-2">
+                <div style="background:var(--gray-100);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--gray-600);">⏱ Est. 2hr</div>
+                <div style="background:var(--gray-100);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--gray-600);">🔧 Maintenance</div>
+              </div>
+            </div>
+
+            <!-- Job Card 2 -->
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:10px;
+                        border-left:4px solid var(--orange);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+              <div class="flex justify-between items-center mb-2">
+                <span class="pill orange">High Priority · 1:00 PM</span>
+                <span style="font-size:11px;color:var(--gray-400);">WO-2247</span>
+              </div>
+              <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:2px;">Riverside Office Complex</div>
+              <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">Repair - Compressor · 8800 Commerce Dr</div>
+              <div class="flex gap-2">
+                <div style="background:var(--gray-100);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--gray-600);">⏱ Est. 3hr</div>
+                <div style="background:var(--gray-100);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--gray-600);">🔩 Repair</div>
+              </div>
+            </div>
+
+            <!-- Job Card 3 -->
+            <div style="background:white;border-radius:12px;padding:14px;
+                        border-left:4px solid var(--gray-300);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+              <div class="flex justify-between items-center mb-2">
+                <span class="pill gray">Scheduled · 4:30 PM</span>
+                <span style="font-size:11px;color:var(--gray-400);">WO-2251</span>
+              </div>
+              <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:2px;">Patel Family Home</div>
+              <div style="font-size:12px;color:var(--gray-500);">Filter Replacement · 112 Maple Ave</div>
+            </div>
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="tab-bar">
+            <div class="tab-item active">
+              <div class="tab-icon">🏠</div>
+              <div>Home</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon">📅</div>
+              <div>Schedule</div>
+            </div>
+            <div class="tab-item" style="position:relative;">
+              <div class="tab-icon">⏱</div>
+              <div>Time Cards</div>
+            </div>
+            <div class="tab-item" style="position:relative;">
+              <div class="tab-icon">💬</div>
+              <div class="badge-dot">3</div>
+              <div>Chat</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="phone-label">Home — Clock In</div>
+    </div>
+
+    <!-- ── SCREEN 2: Active Job / Timer Running ── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#F9FAFB;">
+          <div class="status-bar">
+            <span class="time">10:47</span>
+            <span class="icons">●●●● WiFi ▊</span>
+          </div>
+
+          <!-- Active Timer Header -->
+          <div style="background:var(--green);padding:20px 20px 28px;color:white;">
+            <div style="font-size:12px;opacity:.8;margin-bottom:4px;">● CLOCKED IN · Smith Residence</div>
+            <div style="font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:2px;">
+              0:47:23
+            </div>
+            <div style="font-size:12px;opacity:.75;margin-top:4px;">AC Tune-Up · Maintenance</div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="background:var(--green);padding:0 20px 20px;">
+            <div class="flex gap-3">
+              <button class="btn btn-outline w-full" style="justify-content:center;flex:1;background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.3);">
+                ☕ Break
+              </button>
+              <button class="btn btn-outline w-full" style="justify-content:center;flex:1;background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.3);">
+                🔄 Switch Job
+              </button>
+              <button class="btn w-full" style="justify-content:center;flex:1;background:#DC2626;color:white;">
+                ■ Clock Out
+              </button>
+            </div>
+          </div>
+
+          <!-- Job Info -->
+          <div style="padding:16px 20px 0;">
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+              <div style="font-weight:700;color:var(--navy);margin-bottom:10px;">📋 AC Tune-Up Checklist</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;flex-shrink:0;">✓</div>
+                  <span style="font-size:13px;text-decoration:line-through;color:var(--gray-400);">Check/replace air filter</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;flex-shrink:0;">✓</div>
+                  <span style="font-size:13px;text-decoration:line-through;color:var(--gray-400);">Check refrigerant levels</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;flex-shrink:0;">→</div>
+                  <span style="font-size:13px;font-weight:600;color:var(--navy);">Check condensate drain</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                  <span style="font-size:13px;color:var(--gray-500);">Inspect electrical connections</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                  <span style="font-size:13px;color:var(--gray-500);">Test capacitors</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                  <span style="font-size:13px;color:var(--gray-500);">Clean condenser coils</span>
+                </div>
+              </div>
+              <div style="margin-top:10px;font-size:11px;color:var(--gray-400);">2 of 6 complete</div>
+              <div style="margin-top:6px;background:var(--gray-100);border-radius:4px;height:6px;">
+                <div style="background:var(--teal);width:33%;height:100%;border-radius:4px;"></div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex gap-3">
+              <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:12px;">📸 Add Photo</button>
+              <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:12px;">🔧 Parts Used</button>
+            </div>
+          </div>
+
+          <div class="tab-bar">
+            <div class="tab-item active"><div class="tab-icon">🏠</div><div>Home</div></div>
+            <div class="tab-item"><div class="tab-icon">📅</div><div>Schedule</div></div>
+            <div class="tab-item"><div class="tab-icon">⏱</div><div>Time Cards</div></div>
+            <div class="tab-item" style="position:relative;"><div class="tab-icon">💬</div><div class="badge-dot">3</div><div>Chat</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Active Shift — Job Running</div>
+    </div>
+
+    <!-- ── SCREEN 3: Job Detail ── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#F9FAFB;">
+          <div class="status-bar">
+            <span class="time">9:41</span>
+            <span class="icons">●●●● WiFi ▊</span>
+          </div>
+
+          <!-- Header -->
+          <div style="background:var(--navy);padding:14px 20px;color:white;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:20px;cursor:pointer;">←</span>
+            <div>
+              <div style="font-size:16px;font-weight:700;">WO-2241</div>
+              <div style="font-size:11px;opacity:.7;">Smith Residence · AC Tune-Up</div>
+            </div>
+            <div style="margin-left:auto;"><span class="pill blue">Scheduled</span></div>
+          </div>
+
+          <div style="padding:16px 20px;overflow-y:auto;height:calc(100% - 127px - 83px);">
+
+            <!-- Customer Info -->
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:12px;">
+              <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px;">👤 Customer</div>
+              <div style="font-size:14px;font-weight:600;">Sarah Smith</div>
+              <div style="font-size:12px;color:var(--gray-500);">📞 (214) 555-0192</div>
+              <div style="font-size:12px;color:var(--gray-500);">📍 4521 Oak St, Dallas TX 75201</div>
+              <div style="margin-top:10px;display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" style="flex:1;justify-content:center;">📞 Call</button>
+                <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center;">🗺 Navigate</button>
+              </div>
+            </div>
+
+            <!-- Equipment -->
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:12px;">
+              <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px;">🌡 Equipment</div>
+              <div style="font-size:13px;font-weight:600;">Carrier 3-Ton AC Unit</div>
+              <div style="font-size:12px;color:var(--gray-500);">Model: 24ACC336A003 · S/N: 1234ABC</div>
+              <div style="font-size:12px;color:var(--gray-500);">Installed: June 2019 · Warranty: June 2024</div>
+              <div style="font-size:12px;color:var(--gray-500);">Location: Backyard</div>
+            </div>
+
+            <!-- Scope of Work -->
+            <div style="background:white;border-radius:12px;padding:14px;margin-bottom:12px;">
+              <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:8px;">📝 Scope of Work</div>
+              <div style="font-size:13px;color:var(--gray-700);line-height:1.5;">
+                Annual AC tune-up as part of Premier Maintenance Agreement. Customer reports unit is slightly less efficient than last year. Check refrigerant levels carefully.
+              </div>
+              <hr class="divider">
+              <div style="font-size:12px;color:var(--gray-400);font-style:italic;">Internal: Gate code is #4521. Dog in backyard — keep gate closed.</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <button class="btn btn-primary w-full" style="justify-content:center;padding:14px;font-size:15px;margin-bottom:10px;">
+              ▶ Start This Job
+            </button>
+          </div>
+
+          <div class="tab-bar">
+            <div class="tab-item active"><div class="tab-icon">🏠</div><div>Home</div></div>
+            <div class="tab-item"><div class="tab-icon">📅</div><div>Schedule</div></div>
+            <div class="tab-item"><div class="tab-icon">⏱</div><div>Time Cards</div></div>
+            <div class="tab-item"><div class="tab-icon">💬</div><div>Chat</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Job Detail Screen</div>
+    </div>
+
+    <!-- ── SCREEN 4: Time Cards ── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#F9FAFB;">
+          <div class="status-bar">
+            <span class="time">9:41</span>
+            <span class="icons">●●●● WiFi ▊</span>
+          </div>
+          <div style="background:var(--navy);padding:14px 20px 20px;color:white;">
+            <div style="font-size:18px;font-weight:800;margin-bottom:2px;">My Time Cards</div>
+            <div style="font-size:12px;opacity:.7;">Apr 28 – May 4, 2026 · Pay Period</div>
+          </div>
+
+          <!-- Week Summary -->
+          <div style="margin:16px 20px 0;background:var(--teal);border-radius:12px;padding:14px;color:white;">
+            <div style="font-size:11px;opacity:.8;margin-bottom:6px;">WEEK TOTAL</div>
+            <div style="font-size:32px;font-weight:800;">32h 40m</div>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;opacity:.85;">
+              <span>Regular: 32h 40m</span>
+              <span>OT: 0h</span>
+            </div>
+          </div>
+
+          <!-- Daily Entries -->
+          <div style="padding:16px 20px 0;">
+            <!-- Monday -->
+            <div style="background:white;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">Monday, Apr 28</div>
+                  <div style="font-size:12px;color:var(--gray-500);">Smith Residence · AC Tune-Up</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:14px;font-weight:700;color:var(--navy);">8h 15m</div>
+                  <span class="pill green">Approved</span>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">7:32 AM → 4:17 PM · 30m break</div>
+            </div>
+
+            <!-- Tuesday -->
+            <div style="background:white;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">Tuesday, Apr 29</div>
+                  <div style="font-size:12px;color:var(--gray-500);">3 jobs · Multiple sites</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:14px;font-weight:700;color:var(--navy);">7h 45m</div>
+                  <span class="pill green">Approved</span>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">8:00 AM → 4:15 PM · 30m break</div>
+            </div>
+
+            <!-- Wednesday -->
+            <div style="background:white;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">Wednesday, Apr 30</div>
+                  <div style="font-size:12px;color:var(--gray-500);">Riverside Office · Compressor</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:14px;font-weight:700;color:var(--navy);">8h 40m</div>
+                  <span class="pill yellow">Pending</span>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">7:45 AM → 4:55 PM · 30m break</div>
+            </div>
+
+            <!-- Thursday (today, partial) -->
+            <div style="background:var(--teal-l);border-radius:10px;padding:12px;border:1px solid #BAE6FD;margin-bottom:8px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">Today, May 1</div>
+                  <div style="font-size:12px;color:var(--gray-500);">Not yet clocked in</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:14px;font-weight:700;color:var(--gray-400);">— h —m</div>
+                  <span class="pill gray">Today</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-bar">
+            <div class="tab-item"><div class="tab-icon">🏠</div><div>Home</div></div>
+            <div class="tab-item"><div class="tab-icon">📅</div><div>Schedule</div></div>
+            <div class="tab-item active"><div class="tab-icon">⏱</div><div>Time Cards</div></div>
+            <div class="tab-item"><div class="tab-icon">💬</div><div>Chat</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">My Time Cards</div>
+    </div>
+
+  </div><!-- /grid mobile -->
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     WEB ADMIN — DASHBOARD
+══════════════════════════════════════════════════════ -->
+<div id="web">
+  <p class="section-label">Web Application — Admin</p>
+  <h2 class="section-title">Owner Dashboard</h2>
+  <p class="section-sub">Real-time business overview — revenue, jobs, team utilization</p>
+  <div class="grid">
+    <div class="desktop-wrap">
+      <div class="desktop">
+        <div class="desktop-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url">app.primeair.app/dashboard</div>
+        </div>
+        <div class="admin-layout" style="height:640px;">
+          <!-- Sidebar -->
+          <div class="sidebar">
+            <div class="sidebar-logo">Prime<span>Air</span></div>
+            <div class="sidebar-section">Operations</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">📊</span>Dashboard</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📡</span>Dispatch</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📋</span>Work Orders</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📅</span>Schedule</div>
+            <div class="sidebar-item"><span class="sidebar-icon">👥</span>Customers</div>
+            <div class="sidebar-section">Finance</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📝</span>Estimates</div>
+            <div class="sidebar-item"><span class="sidebar-icon">💳</span>Invoices</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📦</span>Inventory</div>
+            <div class="sidebar-section">Team</div>
+            <div class="sidebar-item"><span class="sidebar-icon">👤</span>Team</div>
+            <div class="sidebar-item"><span class="sidebar-icon">⏱</span>Timecards</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📈</span>Reports</div>
+            <div class="sidebar-item" style="margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;"><span class="sidebar-icon">⚙️</span>Settings</div>
+          </div>
+
+          <!-- Main content -->
+          <div class="admin-main">
+            <div class="admin-topbar">
+              <div class="page-title">Dashboard</div>
+              <div style="font-size:12px;color:var(--gray-500);">Thursday, April 30, 2026</div>
+              <button class="btn btn-primary">+ New Work Order</button>
+            </div>
+            <div class="admin-content">
+
+              <!-- KPI Cards -->
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+                <div style="background:white;border-radius:10px;padding:16px;border-top:3px solid var(--teal);">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:6px;">REVENUE MTD</div>
+                  <div style="font-size:26px;font-weight:800;color:var(--navy);">$84,230</div>
+                  <div style="font-size:12px;color:var(--green);margin-top:4px;">↑ +18% vs last month</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:16px;border-top:3px solid var(--green);">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:6px;">JOBS COMPLETE</div>
+                  <div style="font-size:26px;font-weight:800;color:var(--navy);">147</div>
+                  <div style="font-size:12px;color:var(--green);margin-top:4px;">↑ 23 more than April</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:16px;border-top:3px solid var(--orange);">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:6px;">OPEN RECEIVABLES</div>
+                  <div style="font-size:26px;font-weight:800;color:var(--navy);">$12,450</div>
+                  <div style="font-size:12px;color:var(--orange);margin-top:4px;">⚠ 3 invoices 30d+ past due</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:16px;border-top:3px solid var(--navy);">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:6px;">TECH UTILIZATION</div>
+                  <div style="font-size:26px;font-weight:800;color:var(--navy);">78%</div>
+                  <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Avg billable / scheduled</div>
+                </div>
+              </div>
+
+              <!-- Chart + Status -->
+              <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px;">
+                <!-- Revenue chart placeholder -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div class="flex justify-between items-center mb-4">
+                    <div style="font-weight:700;color:var(--navy);">Revenue This Month</div>
+                    <div style="font-size:12px;color:var(--gray-400);">Daily</div>
+                  </div>
+                  <!-- Simple bar chart -->
+                  <div style="display:flex;align-items:flex-end;gap:4px;height:100px;">
+                    <div style="flex:1;background:var(--teal-l);border-radius:3px 3px 0 0;" title="$2,100" style="height:50%;flex:1;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:62%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:80%;background:var(--teal);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:55%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:90%;background:var(--teal);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:70%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:85%;background:var(--teal);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:65%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:75%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:100%;background:var(--navy);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:88%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:72%;background:var(--teal-l);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:60%;background:var(--gray-200);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:45%;background:var(--gray-200);border-radius:3px 3px 0 0;"></div>
+                    <div style="flex:1;height:35%;background:var(--gray-200);border-radius:3px 3px 0 0;"></div>
+                  </div>
+                  <div style="font-size:10px;color:var(--gray-400);text-align:right;margin-top:4px;">Apr 16 → Apr 30 (today)</div>
+                </div>
+
+                <!-- Job Status Donut Placeholder -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:12px;">Jobs by Status</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="flex items-center gap-2">
+                      <div style="width:12px;height:12px;background:#3B82F6;border-radius:3px;flex-shrink:0;"></div>
+                      <div style="flex:1;font-size:12px;">Scheduled</div>
+                      <div style="font-weight:700;font-size:13px;">24</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div style="width:12px;height:12px;background:var(--green);border-radius:3px;flex-shrink:0;"></div>
+                      <div style="flex:1;font-size:12px;">In Progress</div>
+                      <div style="font-weight:700;font-size:13px;">9</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div style="width:12px;height:12px;background:var(--teal);border-radius:3px;flex-shrink:0;"></div>
+                      <div style="flex:1;font-size:12px;">Complete</div>
+                      <div style="font-weight:700;font-size:13px;">147</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div style="width:12px;height:12px;background:var(--orange);border-radius:3px;flex-shrink:0;"></div>
+                      <div style="flex:1;font-size:12px;">Invoiced</div>
+                      <div style="font-weight:700;font-size:13px;">31</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div style="width:12px;height:12px;background:var(--gray-200);border-radius:3px;flex-shrink:0;"></div>
+                      <div style="flex:1;font-size:12px;">New / Unscheduled</div>
+                      <div style="font-weight:700;font-size:13px;">7</div>
+                    </div>
+                  </div>
+                  <hr class="divider">
+                  <div class="flex justify-between" style="font-size:13px;">
+                    <span style="color:var(--gray-500);">Agreement MRR</span>
+                    <span style="font-weight:700;color:var(--navy);">$8,400</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Techs Today -->
+              <div style="background:white;border-radius:10px;padding:16px;">
+                <div class="flex justify-between items-center mb-3">
+                  <div style="font-weight:700;color:var(--navy);">Techs On Shift Today</div>
+                  <a style="font-size:12px;color:var(--teal);cursor:pointer;">View Live Map →</a>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+                  <div style="background:var(--gray-50);border-radius:8px;padding:10px;text-align:center;">
+                    <div style="font-size:24px;margin-bottom:4px;">👤</div>
+                    <div style="font-size:12px;font-weight:600;">Marcus J.</div>
+                    <div class="pill green" style="margin-top:4px;font-size:10px;">● On Site</div>
+                    <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">WO-2241 · 0:47h</div>
+                  </div>
+                  <div style="background:var(--gray-50);border-radius:8px;padding:10px;text-align:center;">
+                    <div style="font-size:24px;margin-bottom:4px;">👤</div>
+                    <div style="font-size:12px;font-weight:600;">Carlos R.</div>
+                    <div class="pill yellow" style="margin-top:4px;font-size:10px;">● En Route</div>
+                    <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">WO-2244 · ETA 12m</div>
+                  </div>
+                  <div style="background:var(--gray-50);border-radius:8px;padding:10px;text-align:center;">
+                    <div style="font-size:24px;margin-bottom:4px;">👤</div>
+                    <div style="font-size:12px;font-weight:600;">Jasmine T.</div>
+                    <div class="pill blue" style="margin-top:4px;font-size:10px;">● Clocked In</div>
+                    <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">Available · 2:15h today</div>
+                  </div>
+                  <div style="background:var(--gray-50);border-radius:8px;padding:10px;text-align:center;">
+                    <div style="font-size:24px;margin-bottom:4px;">👤</div>
+                    <div style="font-size:12px;font-weight:600;">Derek W.</div>
+                    <div class="pill gray" style="margin-top:4px;font-size:10px;">Not clocked in</div>
+                    <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">First job at 11am</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-label">Admin Dashboard — Owner View</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     DISPATCH BOARD
+══════════════════════════════════════════════════════ -->
+<div id="dispatch">
+  <p class="section-label">Dispatch</p>
+  <h2 class="section-title">Live Dispatch Board</h2>
+  <p class="section-sub">Real-time crew map + drag-and-drop job assignment</p>
+  <div class="grid">
+    <div class="desktop-wrap">
+      <div class="desktop">
+        <div class="desktop-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url">app.primeair.app/dispatch</div>
+        </div>
+        <div class="admin-layout" style="height:680px;">
+          <div class="sidebar">
+            <div class="sidebar-logo">Prime<span>Air</span></div>
+            <div class="sidebar-section">Operations</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📊</span>Dashboard</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">📡</span>Dispatch</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📋</span>Work Orders</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📅</span>Schedule</div>
+            <div class="sidebar-item"><span class="sidebar-icon">👥</span>Customers</div>
+            <div class="sidebar-section">Finance</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📝</span>Estimates</div>
+            <div class="sidebar-item"><span class="sidebar-icon">💳</span>Invoices</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📦</span>Inventory</div>
+          </div>
+          <div class="admin-main">
+            <div class="admin-topbar">
+              <div class="page-title">Dispatch Board</div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--gray-500);">Thursday, Apr 30</span>
+                <button class="btn btn-outline btn-sm">🗺 Map View</button>
+                <button class="btn btn-outline btn-sm">≡ Board</button>
+                <button class="btn btn-primary">+ New Job</button>
+              </div>
+            </div>
+            <div style="display:flex;height:calc(100% - 52px);overflow:hidden;">
+
+              <!-- Unassigned Queue -->
+              <div style="width:220px;background:var(--gray-50);border-right:1px solid var(--gray-200);padding:12px;overflow-y:auto;flex-shrink:0;">
+                <div style="font-size:11px;font-weight:700;color:var(--gray-500);letter-spacing:1px;margin-bottom:10px;">UNASSIGNED (3)</div>
+
+                <div style="background:white;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--red);cursor:grab;">
+                  <div class="pill red" style="margin-bottom:6px;font-size:10px;">🚨 Emergency</div>
+                  <div style="font-weight:700;font-size:12px;color:var(--navy);">Garcia Residence</div>
+                  <div style="font-size:11px;color:var(--gray-500);">No cooling · 5714 Elm St</div>
+                  <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">Received: 9:15 AM</div>
+                </div>
+
+                <div style="background:white;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--orange);cursor:grab;">
+                  <div class="pill orange" style="margin-bottom:6px;font-size:10px;">High</div>
+                  <div style="font-weight:700;font-size:12px;color:var(--navy);">Metro Office Park</div>
+                  <div style="font-size:11px;color:var(--gray-500);">Thermostat replacement</div>
+                  <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">Preferred: PM</div>
+                </div>
+
+                <div style="background:white;border-radius:8px;padding:10px;border-left:3px solid var(--gray-300);cursor:grab;">
+                  <div class="pill gray" style="margin-bottom:6px;font-size:10px;">Normal</div>
+                  <div style="font-weight:700;font-size:12px;color:var(--navy);">Wilson Home</div>
+                  <div style="font-size:11px;color:var(--gray-500);">Annual filter service</div>
+                  <div style="font-size:10px;color:var(--gray-400);margin-top:4px;">Any time today</div>
+                </div>
+              </div>
+
+              <!-- Tech Columns -->
+              <div style="flex:1;overflow-x:auto;padding:12px;display:flex;gap:12px;">
+
+                <!-- Tech 1: Marcus -->
+                <div style="width:220px;flex-shrink:0;">
+                  <div style="background:var(--green);border-radius:8px;padding:8px 10px;color:white;margin-bottom:8px;">
+                    <div style="font-weight:700;font-size:13px;">👤 Marcus Johnson</div>
+                    <div style="font-size:10px;opacity:.85;">● On Site · 0:47h today</div>
+                    <div style="font-size:10px;opacity:.75;">📍 Oak St, Dallas</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--green);">
+                    <div class="pill green" style="margin-bottom:4px;font-size:10px;">● In Progress</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2241 · Smith Residence</div>
+                    <div style="font-size:11px;color:var(--gray-500);">AC Tune-Up · 10:00 AM</div>
+                    <div style="font-size:10px;color:var(--gray-400);">⏱ Est. done: 12:00 PM</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--orange);opacity:.8;">
+                    <div class="pill blue" style="margin-bottom:4px;font-size:10px;">Scheduled 1 PM</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2247 · Riverside Office</div>
+                    <div style="font-size:11px;color:var(--gray-500);">Compressor Repair</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;border-left:3px solid var(--gray-300);opacity:.8;">
+                    <div class="pill gray" style="margin-bottom:4px;font-size:10px;">Scheduled 4:30 PM</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2251 · Patel Home</div>
+                    <div style="font-size:11px;color:var(--gray-500);">Filter Replacement</div>
+                  </div>
+                </div>
+
+                <!-- Tech 2: Carlos -->
+                <div style="width:220px;flex-shrink:0;">
+                  <div style="background:var(--yellow);border-radius:8px;padding:8px 10px;color:white;margin-bottom:8px;">
+                    <div style="font-weight:700;font-size:13px;">👤 Carlos Rivera</div>
+                    <div style="font-size:10px;opacity:.9;">🚗 En Route · ETA 12 min</div>
+                    <div style="font-size:10px;opacity:.8;">📍 I-35 Northbound</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--yellow);">
+                    <div class="pill yellow" style="margin-bottom:4px;font-size:10px;">🚗 En Route</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2244 · Park Cities Office</div>
+                    <div style="font-size:11px;color:var(--gray-500);">HVAC Inspection</div>
+                    <div style="font-size:10px;color:var(--gray-400);">Customer notified ✓</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;border-left:3px solid var(--gray-300);opacity:.8;">
+                    <div class="pill gray" style="margin-bottom:4px;font-size:10px;">Scheduled 2 PM</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2252 · Turner Residence</div>
+                    <div style="font-size:11px;color:var(--gray-500);">Ductwork Inspection</div>
+                  </div>
+                  <!-- Drop zone -->
+                  <div style="border:2px dashed var(--gray-300);border-radius:8px;padding:16px;text-align:center;color:var(--gray-400);font-size:12px;">
+                    + Drop job here
+                  </div>
+                </div>
+
+                <!-- Tech 3: Jasmine -->
+                <div style="width:220px;flex-shrink:0;">
+                  <div style="background:#3B82F6;border-radius:8px;padding:8px 10px;color:white;margin-bottom:8px;">
+                    <div style="font-weight:700;font-size:13px;">👤 Jasmine Torres</div>
+                    <div style="font-size:10px;opacity:.85;">● Clocked In · Available</div>
+                    <div style="font-size:10px;opacity:.75;">📍 Shop / Warehouse</div>
+                  </div>
+                  <div style="border:2px dashed #93C5FD;border-radius:8px;padding:24px;text-align:center;color:#3B82F6;font-size:12px;font-weight:600;">
+                    ✦ Available<br>
+                    <span style="font-weight:400;color:var(--gray-400);font-size:11px;">Drop a job to assign</span>
+                  </div>
+                </div>
+
+                <!-- Tech 4: Derek -->
+                <div style="width:220px;flex-shrink:0;">
+                  <div style="background:var(--gray-300);border-radius:8px;padding:8px 10px;color:var(--gray-700);margin-bottom:8px;">
+                    <div style="font-weight:700;font-size:13px;">👤 Derek Williams</div>
+                    <div style="font-size:10px;opacity:.8;">○ Not Clocked In</div>
+                    <div style="font-size:10px;opacity:.7;">First job: 11:00 AM</div>
+                  </div>
+                  <div style="background:white;border-radius:8px;padding:10px;opacity:.7;border-left:3px solid var(--gray-300);">
+                    <div class="pill gray" style="margin-bottom:4px;font-size:10px;">Scheduled 11 AM</div>
+                    <div style="font-weight:600;font-size:12px;">WO-2255 · Lee Residence</div>
+                    <div style="font-size:11px;color:var(--gray-500);">New Install - Mini Split</div>
+                    <div style="font-size:10px;color:var(--gray-400);">⏱ Est. 4hr</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-label">Dispatch Board — Column View</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     WORK ORDER DETAIL
+══════════════════════════════════════════════════════ -->
+<div id="workorder">
+  <p class="section-label">Work Orders</p>
+  <h2 class="section-title">Work Order Detail</h2>
+  <p class="section-sub">Full job record — customer, equipment, progress, parts, and photos</p>
+  <div class="grid">
+    <div class="desktop-wrap">
+      <div class="desktop">
+        <div class="desktop-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url">app.primeair.app/work-orders/WO-2241</div>
+        </div>
+        <div class="admin-layout" style="height:700px;">
+          <div class="sidebar">
+            <div class="sidebar-logo">Prime<span>Air</span></div>
+            <div class="sidebar-section">Operations</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📊</span>Dashboard</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📡</span>Dispatch</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">📋</span>Work Orders</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📅</span>Schedule</div>
+            <div class="sidebar-item"><span class="sidebar-icon">👥</span>Customers</div>
+            <div class="sidebar-section">Finance</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📝</span>Estimates</div>
+            <div class="sidebar-item"><span class="sidebar-icon">💳</span>Invoices</div>
+          </div>
+          <div class="admin-main">
+            <div class="admin-topbar">
+              <span style="color:var(--teal);cursor:pointer;font-size:13px;">← Work Orders</span>
+              <div class="page-title" style="margin-left:12px;">WO-2241 — Smith Residence</div>
+              <span class="pill green">● In Progress</span>
+              <div style="margin-left:auto;display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm">✏ Edit</button>
+                <button class="btn btn-primary btn-sm">Generate Invoice</button>
+              </div>
+            </div>
+            <div class="admin-content" style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+
+              <!-- Left Column -->
+              <div style="display:flex;flex-direction:column;gap:14px;">
+
+                <!-- Status Timeline -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:12px;">Job Progress</div>
+                  <div style="display:flex;align-items:center;gap:0;">
+                    <div style="text-align:center;flex:1;">
+                      <div style="width:28px;height:28px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;margin:0 auto 4px;">✓</div>
+                      <div style="font-size:10px;color:var(--teal);font-weight:600;">Scheduled</div>
+                    </div>
+                    <div style="flex:1;height:2px;background:var(--teal);"></div>
+                    <div style="text-align:center;flex:1;">
+                      <div style="width:28px;height:28px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;margin:0 auto 4px;">✓</div>
+                      <div style="font-size:10px;color:var(--teal);font-weight:600;">Dispatched</div>
+                    </div>
+                    <div style="flex:1;height:2px;background:var(--teal);"></div>
+                    <div style="text-align:center;flex:1;">
+                      <div style="width:28px;height:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;margin:0 auto 4px;">●</div>
+                      <div style="font-size:10px;color:var(--green);font-weight:600;">In Progress</div>
+                    </div>
+                    <div style="flex:1;height:2px;background:var(--gray-200);"></div>
+                    <div style="text-align:center;flex:1;">
+                      <div style="width:28px;height:28px;background:var(--gray-200);border-radius:50%;margin:0 auto 4px;"></div>
+                      <div style="font-size:10px;color:var(--gray-400);">Complete</div>
+                    </div>
+                    <div style="flex:1;height:2px;background:var(--gray-200);"></div>
+                    <div style="text-align:center;flex:1;">
+                      <div style="width:28px;height:28px;background:var(--gray-200);border-radius:50%;margin:0 auto 4px;"></div>
+                      <div style="font-size:10px;color:var(--gray-400);">Invoiced</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Checklist -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div class="flex justify-between items-center mb-3">
+                    <div style="font-weight:700;color:var(--navy);">AC Tune-Up Checklist</div>
+                    <div style="font-size:12px;color:var(--gray-500);">2 / 6 complete</div>
+                  </div>
+                  <div style="background:var(--gray-100);border-radius:4px;height:6px;margin-bottom:12px;">
+                    <div style="background:var(--teal);width:33%;height:100%;border-radius:4px;"></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;flex-shrink:0;">✓</div>
+                      <span style="font-size:13px;text-decoration:line-through;color:var(--gray-400);">Check/replace air filter</span>
+                      <span style="font-size:11px;color:var(--gray-400);margin-left:auto;">Marcus · 10:12 AM</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;flex-shrink:0;">✓</div>
+                      <span style="font-size:13px;text-decoration:line-through;color:var(--gray-400);">Check refrigerant levels</span>
+                      <span style="font-size:11px;color:var(--gray-400);margin-left:auto;">Marcus · 10:28 AM</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                      <span style="font-size:13px;color:var(--gray-700);">Check condensate drain</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                      <span style="font-size:13px;color:var(--gray-700);">Inspect electrical connections</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                      <span style="font-size:13px;color:var(--gray-700);">Test capacitors</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <div style="width:20px;height:20px;background:var(--gray-200);border-radius:50%;flex-shrink:0;"></div>
+                      <span style="font-size:13px;color:var(--gray-700);">Clean condenser coils</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Parts Used -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div class="flex justify-between items-center mb-3">
+                    <div style="font-weight:700;color:var(--navy);">Parts Used</div>
+                    <button class="btn btn-outline btn-sm">+ Add Part</button>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="flex items-center justify-between" style="padding:8px;background:var(--gray-50);border-radius:6px;">
+                      <div>
+                        <div style="font-size:13px;font-weight:600;">16x25x1 MERV-8 Filter</div>
+                        <div style="font-size:11px;color:var(--gray-400);">Part# FLT-16251 · Qty: 2</div>
+                      </div>
+                      <div style="text-align:right;">
+                        <div style="font-size:13px;font-weight:600;">$28.00</div>
+                        <div style="font-size:10px;color:var(--gray-400);">$14.00 ea</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Right Column -->
+              <div style="display:flex;flex-direction:column;gap:14px;">
+
+                <!-- Customer Info -->
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px;">👤 Customer</div>
+                  <div style="font-size:14px;font-weight:700;">Sarah Smith</div>
+                  <div style="font-size:12px;color:var(--teal);margin:2px 0;">📞 (214) 555-0192</div>
+                  <div style="font-size:12px;color:var(--gray-500);">4521 Oak St, Dallas TX 75201</div>
+                  <hr class="divider">
+                  <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px;">🌡 Equipment</div>
+                  <div style="font-size:12px;">Carrier 3-Ton · 24ACC336</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Installed Jun 2019 · Backyard</div>
+                </div>
+
+                <!-- Assignment -->
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px;">👤 Assigned Tech</div>
+                  <div class="flex items-center gap-3">
+                    <div style="width:36px;height:36px;background:var(--teal-l);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;">👤</div>
+                    <div>
+                      <div style="font-size:13px;font-weight:700;">Marcus Johnson</div>
+                      <div class="pill green" style="font-size:10px;margin-top:2px;">● On Site 0:47h</div>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--gray-400);margin-top:8px;">📍 Clocked in at 10:00 AM</div>
+                </div>
+
+                <!-- Photos -->
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div class="flex justify-between items-center mb-3">
+                    <div style="font-weight:700;color:var(--navy);font-size:13px;">📸 Photos (2)</div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                    <div style="background:var(--gray-100);border-radius:6px;height:70px;display:flex;align-items:center;justify-content:center;font-size:24px;">🌡</div>
+                    <div style="background:var(--gray-100);border-radius:6px;height:70px;display:flex;align-items:center;justify-content:center;font-size:24px;">🔧</div>
+                  </div>
+                  <div style="font-size:10px;color:var(--gray-400);margin-top:6px;">Before: dirty filter, After: replaced</div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px;">Activity</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="flex gap-3">
+                      <div style="width:6px;height:6px;background:var(--teal);border-radius:50%;margin-top:5px;flex-shrink:0;"></div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;">Filter replaced ✓</div>
+                        <div style="font-size:10px;color:var(--gray-400);">Marcus · 10:12 AM</div>
+                      </div>
+                    </div>
+                    <div class="flex gap-3">
+                      <div style="width:6px;height:6px;background:var(--teal);border-radius:50%;margin-top:5px;flex-shrink:0;"></div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;">Refrigerant check complete</div>
+                        <div style="font-size:10px;color:var(--gray-400);">Marcus · 10:28 AM · R-410A level OK</div>
+                      </div>
+                    </div>
+                    <div class="flex gap-3">
+                      <div style="width:6px;height:6px;background:var(--green);border-radius:50%;margin-top:5px;flex-shrink:0;"></div>
+                      <div>
+                        <div style="font-size:12px;font-weight:600;">Arrived on site</div>
+                        <div style="font-size:10px;color:var(--gray-400);">Marcus · 10:00 AM</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-label">Work Order Detail — Admin View</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     INVOICING
+══════════════════════════════════════════════════════ -->
+<div id="invoicing">
+  <p class="section-label">Invoicing & Payments</p>
+  <h2 class="section-title">Invoice Builder</h2>
+  <p class="section-sub">Auto-generated from completed work orders — review, send, and collect payment</p>
+  <div class="grid">
+    <div class="desktop-wrap">
+      <div class="desktop">
+        <div class="desktop-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url">app.primeair.app/invoices/INV-0441</div>
+        </div>
+        <div class="admin-layout" style="height:680px;">
+          <div class="sidebar">
+            <div class="sidebar-logo">Prime<span>Air</span></div>
+            <div class="sidebar-section">Finance</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📝</span>Estimates</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">💳</span>Invoices</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📦</span>Inventory</div>
+            <div class="sidebar-section">Operations</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📊</span>Dashboard</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📡</span>Dispatch</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📋</span>Work Orders</div>
+          </div>
+          <div class="admin-main">
+            <div class="admin-topbar">
+              <span style="color:var(--teal);cursor:pointer;font-size:13px;">← Invoices</span>
+              <div class="page-title" style="margin-left:12px;">INV-0441 · Sarah Smith</div>
+              <span class="pill yellow">Sent · Unpaid</span>
+              <div style="margin-left:auto;display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm">📄 PDF Preview</button>
+                <button class="btn btn-outline btn-sm">📧 Resend</button>
+                <button class="btn btn-primary btn-sm">💳 Collect Payment</button>
+              </div>
+            </div>
+            <div class="admin-content" style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+
+              <!-- Invoice Preview -->
+              <div style="background:white;border-radius:10px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+                <!-- Invoice Header -->
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <div style="font-size:22px;font-weight:800;color:var(--navy);">Prime Air Condition</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Licensed HVAC Contractor</div>
+                    <div style="font-size:12px;color:var(--gray-500);">1400 Commerce St, Dallas TX 75201</div>
+                    <div style="font-size:12px;color:var(--gray-500);">(214) 555-0100 · billing@primeaircondition.com</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:26px;font-weight:800;color:var(--teal);">INVOICE</div>
+                    <div style="font-size:14px;font-weight:700;color:var(--navy);">INV-0441</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Date: April 30, 2026</div>
+                    <div style="font-size:12px;color:var(--orange);font-weight:600;">Due: May 7, 2026</div>
+                  </div>
+                </div>
+
+                <!-- Bill To -->
+                <div style="background:var(--gray-50);border-radius:8px;padding:12px;margin-bottom:20px;">
+                  <div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:4px;">BILL TO</div>
+                  <div style="font-weight:700;">Sarah Smith</div>
+                  <div style="font-size:13px;color:var(--gray-600);">4521 Oak St, Dallas TX 75201</div>
+                  <div style="font-size:13px;color:var(--gray-600);">(214) 555-0192</div>
+                </div>
+
+                <!-- Line Items Table -->
+                <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                  <thead>
+                    <tr style="border-bottom:2px solid var(--navy);">
+                      <th style="text-align:left;padding:8px 4px;font-size:12px;color:var(--navy);">Description</th>
+                      <th style="text-align:center;padding:8px 4px;font-size:12px;color:var(--navy);">Qty</th>
+                      <th style="text-align:right;padding:8px 4px;font-size:12px;color:var(--navy);">Rate</th>
+                      <th style="text-align:right;padding:8px 4px;font-size:12px;color:var(--navy);">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 4px;">
+                        <div style="font-size:13px;font-weight:600;">AC Tune-Up Labor</div>
+                        <div style="font-size:11px;color:var(--gray-500);">Annual maintenance service · Marcus Johnson</div>
+                      </td>
+                      <td style="text-align:center;padding:10px 4px;font-size:13px;">2.0 hr</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;">$120.00</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;font-weight:600;">$240.00</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 4px;">
+                        <div style="font-size:13px;font-weight:600;">16×25×1 MERV-8 Air Filter × 2</div>
+                        <div style="font-size:11px;color:var(--gray-500);">Part# FLT-16251</div>
+                      </td>
+                      <td style="text-align:center;padding:10px 4px;font-size:13px;">2</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;">$14.00</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;font-weight:600;">$28.00</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 4px;">
+                        <div style="font-size:13px;font-weight:600;">Service Call Fee</div>
+                        <div style="font-size:11px;color:var(--gray-500);">Standard dispatch fee</div>
+                      </td>
+                      <td style="text-align:center;padding:10px 4px;font-size:13px;">1</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;">$89.00</td>
+                      <td style="text-align:right;padding:10px 4px;font-size:13px;font-weight:600;">$89.00</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Totals -->
+                <div style="display:flex;justify-content:flex-end;">
+                  <div style="width:220px;">
+                    <div class="flex justify-between" style="padding:4px 0;font-size:13px;">
+                      <span style="color:var(--gray-600);">Subtotal</span>
+                      <span>$357.00</span>
+                    </div>
+                    <div class="flex justify-between" style="padding:4px 0;font-size:13px;">
+                      <span style="color:var(--gray-600);">Tax (8.25%)</span>
+                      <span>$29.45</span>
+                    </div>
+                    <div style="border-top:2px solid var(--navy);margin-top:6px;padding-top:8px;" class="flex justify-between">
+                      <span style="font-weight:800;font-size:15px;color:var(--navy);">Total Due</span>
+                      <span style="font-weight:800;font-size:18px;color:var(--teal);">$386.45</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payment Instructions -->
+                <div style="margin-top:20px;padding:12px;background:var(--teal-l);border-radius:8px;font-size:12px;color:var(--gray-700);">
+                  <strong>Pay online:</strong> Click the Pay Now button in your invoice email · Accepts Visa, Mastercard, Amex, Discover, ACH
+                </div>
+              </div>
+
+              <!-- Right Panel: Status & Actions -->
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <!-- Payment Status -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:12px;">Payment Status</div>
+                  <div style="text-align:center;padding:16px 0;">
+                    <div style="font-size:36px;font-weight:800;color:var(--navy);">$386.45</div>
+                    <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">Total Due · Net 7</div>
+                    <div style="margin-top:6px;"><span class="pill yellow">Sent · Awaiting Payment</span></div>
+                    <div style="font-size:12px;color:var(--orange);margin-top:8px;">Due May 7, 2026</div>
+                  </div>
+                  <div style="border-top:1px solid var(--gray-100);padding-top:12px;">
+                    <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">Sent Apr 30 at 3:22 PM ✓</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Viewed Apr 30 at 3:41 PM 👁</div>
+                  </div>
+                </div>
+
+                <!-- Collect Payment -->
+                <div style="background:white;border-radius:10px;padding:16px;">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:10px;">Collect Payment Now</div>
+                  <button class="btn btn-primary w-full" style="justify-content:center;margin-bottom:8px;padding:12px;">
+                    📱 Tap-to-Pay (iPhone)
+                  </button>
+                  <button class="btn btn-outline w-full" style="justify-content:center;margin-bottom:8px;padding:10px;">
+                    💳 Send Payment Link
+                  </button>
+                  <button class="btn btn-outline w-full" style="justify-content:center;padding:10px;">
+                    💵 Record Check / Cash
+                  </button>
+                </div>
+
+                <!-- Work Order Link -->
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:8px;">Linked Work Order</div>
+                  <div style="font-size:13px;font-weight:600;color:var(--teal);">WO-2241</div>
+                  <div style="font-size:12px;color:var(--gray-500);">AC Tune-Up · Apr 30, 2026</div>
+                  <div style="font-size:12px;color:var(--gray-500);">Tech: Marcus Johnson · 2.0 hrs</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-label">Invoice Detail & Payment Collection</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     REPORTS
+══════════════════════════════════════════════════════ -->
+<div id="reports" style="padding-bottom:80px;">
+  <p class="section-label">Reporting</p>
+  <h2 class="section-title">Job Profitability Report</h2>
+  <p class="section-sub">Revenue vs. labor cost vs. parts cost — per job, per tech, or per month</p>
+  <div class="grid">
+    <div class="desktop-wrap">
+      <div class="desktop">
+        <div class="desktop-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url">app.primeair.app/reports/profitability</div>
+        </div>
+        <div class="admin-layout" style="height:660px;">
+          <div class="sidebar">
+            <div class="sidebar-logo">Prime<span>Air</span></div>
+            <div class="sidebar-section">Reports</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📊</span>Dashboard</div>
+            <div class="sidebar-item"><span class="sidebar-icon">💰</span>Labor Cost</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">📈</span>Profitability</div>
+            <div class="sidebar-item"><span class="sidebar-icon">👤</span>Tech Productivity</div>
+            <div class="sidebar-item"><span class="sidebar-icon">💳</span>Payroll Export</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📄</span>AR Aging</div>
+            <div class="sidebar-item"><span class="sidebar-icon">🤝</span>Agreements</div>
+          </div>
+          <div class="admin-main">
+            <div class="admin-topbar">
+              <div class="page-title">Job Profitability</div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <select style="border:1px solid var(--gray-300);border-radius:6px;padding:6px 10px;font-size:13px;color:var(--gray-700);">
+                  <option>April 2026</option>
+                </select>
+                <button class="btn btn-outline btn-sm">Filter</button>
+                <button class="btn btn-primary btn-sm">⬇ Export CSV</button>
+              </div>
+            </div>
+            <div class="admin-content">
+
+              <!-- Summary Cards -->
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:4px;">TOTAL REVENUE</div>
+                  <div style="font-size:22px;font-weight:800;color:var(--navy);">$84,230</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:4px;">TOTAL LABOR COST</div>
+                  <div style="font-size:22px;font-weight:800;color:var(--navy);">$32,140</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:14px;">
+                  <div style="font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:4px;">PARTS COST</div>
+                  <div style="font-size:22px;font-weight:800;color:var(--navy);">$11,860</div>
+                </div>
+                <div style="background:white;border-radius:10px;padding:14px;background:linear-gradient(135deg,var(--teal),var(--navy));">
+                  <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:4px;">GROSS MARGIN</div>
+                  <div style="font-size:22px;font-weight:800;color:white;">$40,230</div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:2px;">47.8% margin</div>
+                </div>
+              </div>
+
+              <!-- Job Table -->
+              <div style="background:white;border-radius:10px;overflow:hidden;">
+                <div style="padding:14px 16px;border-bottom:1px solid var(--gray-100);">
+                  <div style="font-weight:700;color:var(--navy);">Jobs This Month (147 complete)</div>
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                  <thead style="background:var(--gray-50);">
+                    <tr>
+                      <th style="text-align:left;padding:10px 16px;color:var(--gray-500);font-size:11px;font-weight:700;">JOB</th>
+                      <th style="text-align:left;padding:10px 8px;color:var(--gray-500);font-size:11px;font-weight:700;">TYPE</th>
+                      <th style="text-align:right;padding:10px 8px;color:var(--gray-500);font-size:11px;font-weight:700;">REVENUE</th>
+                      <th style="text-align:right;padding:10px 8px;color:var(--gray-500);font-size:11px;font-weight:700;">LABOR</th>
+                      <th style="text-align:right;padding:10px 8px;color:var(--gray-500);font-size:11px;font-weight:700;">PARTS</th>
+                      <th style="text-align:right;padding:10px 16px;color:var(--gray-500);font-size:11px;font-weight:700;">MARGIN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 16px;">
+                        <div style="font-weight:600;">WO-2232 · Lee Residence</div>
+                        <div style="font-size:11px;color:var(--gray-400);">New Install - 5-ton · Derek W.</div>
+                      </td>
+                      <td style="padding:10px 8px;"><span class="pill blue">Installation</span></td>
+                      <td style="padding:10px 8px;text-align:right;font-weight:600;">$4,800</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$960</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$1,840</td>
+                      <td style="padding:10px 16px;text-align:right;">
+                        <span style="font-weight:700;color:var(--green);">$2,000</span>
+                        <div style="font-size:10px;color:var(--green);">41.7%</div>
+                      </td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 16px;">
+                        <div style="font-weight:600;">WO-2238 · Riverside Office</div>
+                        <div style="font-size:11px;color:var(--gray-400);">Compressor Repair · Carlos R.</div>
+                      </td>
+                      <td style="padding:10px 8px;"><span class="pill orange">Repair</span></td>
+                      <td style="padding:10px 8px;text-align:right;font-weight:600;">$1,240</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$360</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$284</td>
+                      <td style="padding:10px 16px;text-align:right;">
+                        <span style="font-weight:700;color:var(--green);">$596</span>
+                        <div style="font-size:10px;color:var(--green);">48.1%</div>
+                      </td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 16px;">
+                        <div style="font-weight:600;">WO-2241 · Smith Residence</div>
+                        <div style="font-size:11px;color:var(--gray-400);">AC Tune-Up · Marcus J.</div>
+                      </td>
+                      <td style="padding:10px 8px;"><span class="pill teal">Maintenance</span></td>
+                      <td style="padding:10px 8px;text-align:right;font-weight:600;">$386</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$120</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$22</td>
+                      <td style="padding:10px 16px;text-align:right;">
+                        <span style="font-weight:700;color:var(--green);">$244</span>
+                        <div style="font-size:10px;color:var(--green);">63.2%</div>
+                      </td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--gray-100);">
+                      <td style="padding:10px 16px;">
+                        <div style="font-weight:600;">WO-2218 · Garza Auto Body</div>
+                        <div style="font-size:11px;color:var(--gray-400);">Emergency Repair · Marcus J.</div>
+                      </td>
+                      <td style="padding:10px 8px;"><span class="pill red">Emergency</span></td>
+                      <td style="padding:10px 8px;text-align:right;font-weight:600;">$920</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$540</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$162</td>
+                      <td style="padding:10px 16px;text-align:right;">
+                        <span style="font-weight:700;color:var(--orange);">$218</span>
+                        <div style="font-size:10px;color:var(--orange);">23.7%</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px 16px;">
+                        <div style="font-weight:600;">WO-2209 · Park Cities HOA</div>
+                        <div style="font-size:11px;color:var(--gray-400);">HVAC Inspection · Jasmine T.</div>
+                      </td>
+                      <td style="padding:10px 8px;"><span class="pill gray">Inspection</span></td>
+                      <td style="padding:10px 8px;text-align:right;font-weight:600;">$350</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$180</td>
+                      <td style="padding:10px 8px;text-align:right;color:var(--gray-600);">$0</td>
+                      <td style="padding:10px 16px;text-align:right;">
+                        <span style="font-weight:700;color:var(--green);">$170</span>
+                        <div style="font-size:10px;color:var(--green);">48.6%</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div style="padding:12px 16px;font-size:12px;color:var(--gray-400);text-align:center;border-top:1px solid var(--gray-100);">
+                  Showing 5 of 147 jobs · <span style="color:var(--teal);cursor:pointer;">View All</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-label">Job Profitability Report</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

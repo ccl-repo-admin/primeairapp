@@ -1,0 +1,1165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────
+
+enum Plan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+/// Drives which app a user is directed to and which work orders they're eligible for.
+/// Separate from Role (permissions). SERVICE_TECH + INSTALLER → timeclock PWA. OFFICE_STAFF → hub PWA.
+enum JobType {
+  SERVICE_TECH
+  INSTALLER
+  OFFICE_STAFF
+}
+
+enum PayPeriodType {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+}
+
+enum PayType {
+  HOURLY
+  SALARY
+}
+
+enum TimeEntryStatus {
+  ACTIVE
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BreakType {
+  MEAL
+  REST
+  OTHER
+}
+
+enum TimeOffStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AssetType {
+  AC_UNIT
+  FURNACE
+  HEAT_PUMP
+  MINI_SPLIT
+  AIR_HANDLER
+  THERMOSTAT
+  DUCTWORK
+  WATER_HEATER
+  HUMIDIFIER
+  AIR_PURIFIER
+  OTHER
+}
+
+enum AgreementType {
+  ANNUAL
+  BIANNUAL
+  QUARTERLY
+  MONTHLY
+}
+
+enum AgreementStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING_RENEWAL
+}
+
+enum WorkOrderType {
+  NEW_INSTALLATION
+  REPAIR
+  PREVENTIVE_MAINTENANCE
+  EMERGENCY
+  WARRANTY
+  INSPECTION
+  ESTIMATE_ONLY
+}
+
+enum WorkOrderStatus {
+  NEW
+  SCHEDULED
+  DISPATCHED
+  EN_ROUTE
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETE
+  INVOICED
+  PAID
+  CANCELLED
+}
+
+enum Priority {
+  EMERGENCY
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum EstimateStatus {
+  DRAFT
+  SENT
+  VIEWED
+  APPROVED
+  REJECTED
+  EXPIRED
+  CONVERTED
+}
+
+enum LineItemType {
+  LABOR
+  PART
+  MATERIAL
+  FEE
+  DISCOUNT
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PARTIAL
+  PAID
+  OVERDUE
+  VOIDED
+}
+
+enum PaymentMethod {
+  CARD_TAP_TO_PAY
+  CARD_ONLINE
+  ACH
+  CHECK
+  CASH
+  FINANCING
+}
+
+enum FormTrigger {
+  CLOCK_IN
+  CLOCK_OUT
+  JOB_START
+  JOB_COMPLETE
+}
+
+enum ChannelType {
+  DIRECT
+  GROUP
+  JOB_THREAD
+  ANNOUNCEMENT
+}
+
+enum MessageType {
+  TEXT
+  PHOTO
+  VOICE_MEMO
+  DOCUMENT
+  SYSTEM
+}
+
+enum CommChannel {
+  SMS
+  EMAIL
+}
+
+enum CommDirection {
+  OUTBOUND
+  INBOUND
+}
+
+enum CommStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum IntegrationType {
+  QUICKBOOKS_ONLINE
+  QUICKBOOKS_DESKTOP
+  XERO
+  GUSTO
+  ADP_RUN
+  PAYCHEX
+  RIPPLING
+  GOOGLE_CALENDAR
+  STRIPE
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  PENDING
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETE
+  CANCELLED
+}
+
+enum PhotoType {
+  BEFORE
+  AFTER
+  EQUIPMENT
+  DAMAGE
+  PERMIT
+  OTHER
+}
+
+enum NoteVisibility {
+  INTERNAL
+  FIELD
+  CUSTOMER
+}
+
+enum PartRequestStatus {
+  REQUESTED
+  ORDERED
+  RECEIVED
+  CANCELLED
+}
+
+enum PartRequestUrgency {
+  STANDARD
+  URGENT
+}
+
+// ─────────────────────────────────────
+// COMPANY
+// ─────────────────────────────────────
+
+model Company {
+  id                   String    @id @default(cuid())
+  name                 String
+  slug                 String    @unique
+  phone                String?
+  email                String?
+  website              String?
+  logoUrl              String?
+  addressLine1         String?
+  addressLine2         String?
+  city                 String?
+  state                String?
+  zip                  String?
+  timezone             String    @default("America/New_York")
+
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  plan                 Plan      @default(STARTER)
+  trialEndsAt          DateTime?
+
+  overtimeState        String        @default("federal")
+  defaultBreakMinutes  Int           @default(30)
+  geofenceRadiusFt     Int           @default(200)
+  clockOutAfterHours   Int           @default(24)
+  requireFacePhoto     Boolean       @default(false)
+  requireSignOff       Boolean       @default(false)
+  payPeriodType        PayPeriodType @default(BIWEEKLY)
+  payPeriodAnchorDate  DateTime?
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  users           User[]
+  roles           Role[]
+  customers       Customer[]
+  workOrders      WorkOrder[]
+  projects        Project[]
+  costCodes       CostCode[]
+  forms           Form[]
+  inventory       Part[]
+  chatChannels    ChatChannel[]
+  timeOffPolicies TimeOffPolicy[]
+  integrations    Integration[]
+
+  @@index([slug])
+}
+
+// ─────────────────────────────────────
+// USERS
+// ─────────────────────────────────────
+
+model User {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  firstName  String
+  lastName   String
+  email      String?
+  phone      String?
+  avatarUrl  String?
+
+  passwordHash String?
+  roleId       String
+  role         Role    @relation(fields: [roleId], references: [id])
+  jobType      JobType @default(SERVICE_TECH)
+  isActive     Boolean @default(true)
+
+  title          String?
+  certifications String[]
+  skills         String[]
+  color          String?
+
+  hourlyRate       Decimal? @db.Decimal(8, 2)
+  payType          PayType  @default(HOURLY)
+  maxDailyMinutes  Int?
+  maxWeeklyMinutes Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  devices           Device[]
+  timeEntries       TimeEntry[]
+  locationPings     LocationPing[]
+  workAssignments   WorkOrderAssignment[]
+  approvedTimecards TimeEntry[]           @relation("TimecardApprover")
+  timeEntryEdits    TimeEntryEdit[]       @relation("TimeEntryEditor")
+  sentMessages      Message[]
+  timeOffRequests   TimeOffRequest[]
+  createdWorkOrders WorkOrder[]           @relation("WorkOrderCreator")
+  uploadedPhotos    WorkOrderPhoto[]      @relation("PhotoUploader")
+  authoredNotes     WorkOrderNote[]       @relation("NoteAuthor")
+  submittedPartRequests WorkOrderPartRequest[] @relation("PartRequester")
+
+  @@unique([companyId, email])
+  @@unique([companyId, phone])
+  @@index([companyId, roleId])
+  @@index([companyId, jobType])
+  @@index([companyId, isActive])
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  name        String
+  description String?
+  isBuiltIn   Boolean  @default(false)
+  sortOrder   Int      @default(99)
+
+  hubAccess       Boolean @default(false)
+  timeclockAccess Boolean @default(false)
+
+  canClockIn          Boolean @default(true)
+  canViewOwnTimecards Boolean @default(true)
+  canEditTimecards    Boolean @default(false)
+  canApproveTimecards Boolean @default(false)
+  canAssignWorkOrders Boolean @default(false)
+  canManageCustomers  Boolean @default(false)
+  canViewReports      Boolean @default(false)
+  canExportPayroll    Boolean @default(false)
+  canManageTeam       Boolean @default(false)
+  canManageAdmin      Boolean @default(false)
+  canManageRoles      Boolean @default(false)
+  canManageBilling    Boolean @default(false)
+
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])
+  @@index([companyId])
+}
+
+model Device {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  expoPushToken String?
+  platform      String
+  deviceModel   String?
+  appVersion    String?
+  lastSeen      DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ─────────────────────────────────────
+// TIME TRACKING
+// ─────────────────────────────────────
+
+model TimeEntry {
+  id          String  @id @default(cuid())
+  companyId   String
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
+  projectId   String?
+  project     Project?   @relation(fields: [projectId], references: [id])
+  costCodeId  String?
+  costCode    CostCode?  @relation(fields: [costCodeId], references: [id])
+
+  clockInAt  DateTime
+  clockOutAt DateTime?
+  breakMinutes Int     @default(0)
+  totalMinutes Int?
+
+  regularMinutes    Int?
+  overtimeMinutes   Int?
+  doubleTimeMinutes Int?
+
+  status TimeEntryStatus @default(ACTIVE)
+
+  clockInLat   Float?
+  clockInLng   Float?
+  clockInPhoto String?
+
+  signedOffAt     DateTime?
+  signedOffByTech Boolean   @default(false)
+  breakCompliance Boolean?
+
+  approvedAt   DateTime?
+  approvedById String?
+  approvedBy   User?     @relation("TimecardApprover", fields: [approvedById], references: [id])
+
+  note     String?
+  isManual Boolean @default(false)
+
+  /// QuickBooks Desktop: maps to QB TimeTracking EntityRef (employee ListID)
+  qbEntityId String?
+  /// Tracks when this entry was last pushed to QB Desktop
+  qbSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  edits  TimeEntryEdit[]
+  breaks Break[]
+
+  @@index([companyId, userId, clockInAt])
+  @@index([companyId, workOrderId])
+  @@index([companyId, status])
+  @@index([qbSyncedAt])
+}
+
+model Break {
+  id          String    @id @default(cuid())
+  timeEntryId String
+  timeEntry   TimeEntry @relation(fields: [timeEntryId], references: [id])
+  startAt     DateTime
+  endAt       DateTime?
+  minutes     Int?
+  type        BreakType @default(MEAL)
+
+  @@index([timeEntryId])
+}
+
+model TimeEntryEdit {
+  id          String    @id @default(cuid())
+  timeEntryId String
+  timeEntry   TimeEntry @relation(fields: [timeEntryId], references: [id])
+  editedById  String
+  editedBy    User      @relation("TimeEntryEditor", fields: [editedById], references: [id])
+  field       String
+  oldValue    String
+  newValue    String
+  reason      String
+  editedAt    DateTime  @default(now())
+
+  @@index([timeEntryId])
+}
+
+model LocationPing {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  companyId String
+
+  lat       Float
+  lng       Float
+  accuracy  Float?
+  speed     Float?
+  bearing   Float?
+  altitude  Float?
+  isDriving Boolean  @default(false)
+  timestamp DateTime
+
+  @@index([companyId, userId, timestamp])
+}
+
+// ─────────────────────────────────────
+// TIME OFF
+// ─────────────────────────────────────
+
+model TimeOffPolicy {
+  id                      String  @id @default(cuid())
+  companyId               String
+  company                 Company @relation(fields: [companyId], references: [id])
+  name                    String
+  type                    String  @default("VACATION")
+  isPaid                  Boolean @default(true)
+  accrualEnabled          Boolean @default(false)
+  accrualRateHoursPerYear Float?
+  maxBalanceHours         Float?
+  maxRequestDays          Int     @default(14)
+
+  requests TimeOffRequest[]
+}
+
+model TimeOffRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  policyId    String
+  policy      TimeOffPolicy @relation(fields: [policyId], references: [id])
+  startDate   DateTime
+  endDate     DateTime
+  hoursPerDay Float
+  reason      String?
+  status      TimeOffStatus @default(PENDING)
+
+  reviewedById String?
+  reviewedAt   DateTime?
+  reviewNote   String?
+
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────
+// CUSTOMERS & ASSETS
+// ─────────────────────────────────────
+
+model Customer {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  firstName   String
+  lastName    String?
+  companyName String?
+  email       String?
+  phone       String?
+  altPhone    String?
+
+  preferredContactMethod String?
+  preferredTechId        String?
+  notes                  String?
+  tags                   String[]
+
+  portalEmail        String?
+  portalPasswordHash String?
+
+  source       String?
+  referredById String?
+
+  /// QuickBooks Desktop: maps to QB Customer ListID from QBXML
+  qbEntityId String?
+  qbSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses      ServiceAddress[]
+  assets         Asset[]
+  workOrders     WorkOrder[]
+  estimates      Estimate[]
+  invoices       Invoice[]
+  agreements     ServiceAgreement[]
+  communications CustomerCommunication[]
+
+  @@index([companyId, lastName])
+  @@index([companyId, phone])
+  @@index([companyId, email])
+  @@index([companyId, qbEntityId])
+}
+
+model ServiceAddress {
+  id               String   @id @default(cuid())
+  customerId       String
+  customer         Customer @relation(fields: [customerId], references: [id])
+  label            String?
+  line1            String
+  line2            String?
+  city             String
+  state            String
+  zip              String
+  lat              Float?
+  lng              Float?
+  geofenceRadiusFt Int      @default(200)
+  isPrimary        Boolean  @default(false)
+
+  workOrders WorkOrder[]
+
+  @@index([customerId])
+}
+
+model Asset {
+  id              String    @id @default(cuid())
+  companyId       String
+  customerId      String
+  customer        Customer  @relation(fields: [customerId], references: [id])
+  addressId       String?
+  type            AssetType
+  make            String?
+  model           String?
+  serialNumber    String?
+  seerRating      Float?
+  tonnage         Float?
+  location        String?
+  installDate     DateTime?
+  warrantyExpires DateTime?
+  lastServiceDate DateTime?
+  nextServiceDue  DateTime?
+  condition       String?
+  notes           String?
+  photos          String[]
+  documents       String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workOrders WorkOrder[]
+
+  @@index([companyId, customerId])
+  @@index([companyId, serialNumber])
+}
+
+// ─────────────────────────────────────
+// SERVICE AGREEMENTS
+// ─────────────────────────────────────
+
+model ServiceAgreement {
+  id         String          @id @default(cuid())
+  companyId  String
+  customerId String
+  customer   Customer        @relation(fields: [customerId], references: [id])
+  type       AgreementType
+  status     AgreementStatus @default(ACTIVE)
+  name       String
+  startDate  DateTime
+  endDate    DateTime
+  price      Decimal         @db.Decimal(10, 2)
+  notes      String?
+
+  autoRenew     Boolean  @default(false)
+  renewalSentAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workOrders WorkOrder[]
+
+  @@index([companyId, customerId])
+  @@index([companyId, status])
+}
+
+// ─────────────────────────────────────
+// WORK ORDERS
+// ─────────────────────────────────────
+
+model WorkOrder {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  number         Int
+  type           WorkOrderType   @default(REPAIR)
+  status         WorkOrderStatus @default(NEW)
+  priority       Priority        @default(NORMAL)
+
+  customerId       String
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  serviceAddressId String?
+  serviceAddress   ServiceAddress? @relation(fields: [serviceAddressId], references: [id])
+  assetId          String?
+  asset            Asset?          @relation(fields: [assetId], references: [id])
+  agreementId      String?
+  agreement        ServiceAgreement? @relation(fields: [agreementId], references: [id])
+
+  description       String?
+  internalNotes     String?
+  diagnostics       Json?
+  scheduledStart    DateTime?
+  estimatedDuration Int?
+  completedAt       DateTime?
+
+  createdByUserId String
+  createdBy       User   @relation("WorkOrderCreator", fields: [createdByUserId], references: [id])
+
+  /// QuickBooks Desktop: maps to QB CustomerJob reference (sub-customer TxnID)
+  qbEntityId String?
+  qbSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments    WorkOrderAssignment[]
+  statusHistory  WorkOrderStatusHistory[]
+  timeEntries    TimeEntry[]
+  partUsages     PartUsage[]
+  checklists     Checklist[]
+  formSubmissions FormSubmission[]
+  estimates      Estimate[]
+  invoices       Invoice[]
+  tasks          Task[]
+  communications CustomerCommunication[]
+  photos         WorkOrderPhoto[]
+  notes          WorkOrderNote[]
+  partRequests   WorkOrderPartRequest[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+  @@index([companyId, customerId])
+  @@index([companyId, scheduledStart])
+}
+
+model WorkOrderAssignment {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  isLead      Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  assignedAt  DateTime  @default(now())
+
+  @@unique([workOrderId, userId])
+  @@index([userId])
+}
+
+model WorkOrderStatusHistory {
+  id          String          @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder       @relation(fields: [workOrderId], references: [id])
+  fromStatus  WorkOrderStatus?
+  toStatus    WorkOrderStatus
+  changedById String
+  note        String?
+  changedAt   DateTime        @default(now())
+
+  @@index([workOrderId])
+}
+
+model WorkOrderPhoto {
+  id           String    @id @default(cuid())
+  workOrderId  String
+  workOrder    WorkOrder @relation(fields: [workOrderId], references: [id])
+  uploadedById String
+  uploadedBy   User      @relation("PhotoUploader", fields: [uploadedById], references: [id])
+  url          String
+  caption      String?
+  photoType    PhotoType @default(OTHER)
+  takenAt      DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+
+  @@index([workOrderId])
+}
+
+model WorkOrderNote {
+  id          String         @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder      @relation(fields: [workOrderId], references: [id])
+  authorId    String
+  author      User           @relation("NoteAuthor", fields: [authorId], references: [id])
+  body        String
+  visibility  NoteVisibility @default(INTERNAL)
+  isPinned    Boolean        @default(false)
+  editedAt    DateTime?
+  createdAt   DateTime       @default(now())
+
+  @@index([workOrderId])
+}
+
+model WorkOrderPartRequest {
+  id            String             @id @default(cuid())
+  workOrderId   String
+  workOrder     WorkOrder          @relation(fields: [workOrderId], references: [id])
+  requestedById String
+  requestedBy   User               @relation("PartRequester", fields: [requestedById], references: [id])
+  name          String
+  partNumber    String?
+  quantity      Int                @default(1)
+  urgency       PartRequestUrgency @default(STANDARD)
+  status        PartRequestStatus  @default(REQUESTED)
+  notes         String?
+  orderedAt     DateTime?
+  receivedAt    DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([workOrderId])
+}
+
+// ─────────────────────────────────────
+// PROJECTS & COST CODES
+// ─────────────────────────────────────
+
+model Project {
+  id          String  @id @default(cuid())
+  companyId   String
+  company     Company @relation(fields: [companyId], references: [id])
+  name        String
+  description String?
+  status      String  @default("ACTIVE")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  costCodes   CostCode[]
+  timeEntries TimeEntry[]
+
+  @@index([companyId])
+}
+
+model CostCode {
+  id          String  @id @default(cuid())
+  companyId   String
+  company     Company @relation(fields: [companyId], references: [id])
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  code        String
+  description String?
+
+  timeEntries TimeEntry[]
+
+  @@unique([companyId, code])
+}
+
+// ─────────────────────────────────────
+// ESTIMATES
+// ─────────────────────────────────────
+
+model Estimate {
+  id          String         @id @default(cuid())
+  companyId   String
+  workOrderId String?
+  workOrder   WorkOrder?     @relation(fields: [workOrderId], references: [id])
+  customerId  String
+  customer    Customer       @relation(fields: [customerId], references: [id])
+
+  number     Int
+  status     EstimateStatus @default(DRAFT)
+  notes      String?
+  validUntil DateTime?
+  approvalToken String?      @unique
+  approvedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tiers EstimateTier[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+}
+
+model EstimateTier {
+  id          String   @id @default(cuid())
+  estimateId  String
+  estimate    Estimate @relation(fields: [estimateId], references: [id])
+  label       String
+  description String?
+  isApproved  Boolean  @default(false)
+
+  lineItems EstimateLineItem[]
+}
+
+model EstimateLineItem {
+  id         String       @id @default(cuid())
+  tierId     String
+  tier       EstimateTier @relation(fields: [tierId], references: [id])
+  type       LineItemType
+  description String
+  quantity   Decimal      @db.Decimal(10, 3)
+  unitPrice  Decimal      @db.Decimal(10, 2)
+  total      Decimal      @db.Decimal(10, 2)
+  partId     String?
+  sortOrder  Int          @default(0)
+}
+
+// ─────────────────────────────────────
+// INVOICES & PAYMENTS
+// ─────────────────────────────────────
+
+model Invoice {
+  id          String        @id @default(cuid())
+  companyId   String
+  workOrderId String?
+  workOrder   WorkOrder?    @relation(fields: [workOrderId], references: [id])
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+
+  number    Int
+  status    InvoiceStatus @default(DRAFT)
+  dueDate   DateTime?
+  paidAt    DateTime?
+  notes     String?
+  taxRate   Decimal?      @db.Decimal(5, 4)
+  discount  Decimal?      @db.Decimal(10, 2)
+
+  stripePaymentIntentId String?
+
+  /// QuickBooks Desktop: maps to QB Invoice TxnID
+  qbEntityId String?
+  qbSyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lineItems InvoiceLineItem[]
+  payments  Payment[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+  @@index([companyId, customerId])
+}
+
+model InvoiceLineItem {
+  id          String       @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice      @relation(fields: [invoiceId], references: [id])
+  type        LineItemType
+  description String
+  quantity    Decimal      @db.Decimal(10, 3)
+  unitPrice   Decimal      @db.Decimal(10, 2)
+  total       Decimal      @db.Decimal(10, 2)
+  partId      String?
+  sortOrder   Int          @default(0)
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  invoiceId String
+  invoice   Invoice       @relation(fields: [invoiceId], references: [id])
+  method    PaymentMethod
+  amount    Decimal       @db.Decimal(10, 2)
+  reference String?
+  note      String?
+  paidAt    DateTime      @default(now())
+
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+}
+
+// ─────────────────────────────────────
+// INVENTORY
+// ─────────────────────────────────────
+
+model Part {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+  name      String
+  sku       String?
+  unitPrice Decimal @db.Decimal(10, 2)
+  unit      String  @default("each")
+  notes     String?
+
+  truckStock    TruckStock[]
+  warehouseStock WarehouseStock[]
+  partUsages    PartUsage[]
+
+  @@index([companyId])
+}
+
+model TruckStock {
+  id       String @id @default(cuid())
+  partId   String
+  part     Part   @relation(fields: [partId], references: [id])
+  techId   String
+  quantity Int    @default(0)
+
+  @@unique([partId, techId])
+}
+
+model WarehouseStock {
+  id       String @id @default(cuid())
+  partId   String
+  part     Part   @relation(fields: [partId], references: [id])
+  location String?
+  quantity Int    @default(0)
+
+  @@unique([partId])
+}
+
+model PartUsage {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  partId      String
+  part        Part      @relation(fields: [partId], references: [id])
+  quantity    Decimal   @db.Decimal(10, 3)
+  unitPrice   Decimal   @db.Decimal(10, 2)
+  usedAt      DateTime  @default(now())
+}
+
+// ─────────────────────────────────────
+// FORMS
+// ─────────────────────────────────────
+
+model Form {
+  id         String      @id @default(cuid())
+  companyId  String
+  company    Company     @relation(fields: [companyId], references: [id])
+  name       String
+  trigger    FormTrigger?
+  schema     Json
+  isTemplate Boolean     @default(false)
+  isActive   Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions FormSubmission[]
+
+  @@index([companyId])
+}
+
+model FormSubmission {
+  id          String     @id @default(cuid())
+  formId      String
+  form        Form       @relation(fields: [formId], references: [id])
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
+  userId      String
+  data        Json
+  hasFlagged  Boolean    @default(false)
+  submittedAt DateTime   @default(now())
+
+  @@index([formId])
+  @@index([workOrderId])
+}
+
+// ─────────────────────────────────────
+// CHECKLISTS & TASKS
+// ─────────────────────────────────────
+
+model Checklist {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  name        String
+
+  items ChecklistItem[]
+}
+
+model ChecklistItem {
+  id          String    @id @default(cuid())
+  checklistId String
+  checklist   Checklist @relation(fields: [checklistId], references: [id])
+  text        String
+  isComplete  Boolean   @default(false)
+  completedAt DateTime?
+  completedById String?
+  sortOrder   Int       @default(0)
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  companyId   String
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
+  assignedToId String?
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  dueDate     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId, assignedToId])
+}
+
+// ─────────────────────────────────────
+// CHAT & COMMUNICATIONS
+// ─────────────────────────────────────
+
+model ChatChannel {
+  id          String      @id @default(cuid())
+  companyId   String
+  company     Company     @relation(fields: [companyId], references: [id])
+  type        ChannelType
+  name        String?
+  workOrderId String?
+  createdAt   DateTime    @default(now())
+
+  messages Message[]
+
+  @@index([companyId, type])
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  channelId String
+  channel   ChatChannel @relation(fields: [channelId], references: [id])
+  senderId  String
+  sender    User        @relation(fields: [senderId], references: [id])
+  type      MessageType @default(TEXT)
+  body      String?
+  mediaUrl  String?
+  sentAt    DateTime    @default(now())
+
+  @@index([channelId, sentAt])
+}
+
+model CustomerCommunication {
+  id          String        @id @default(cuid())
+  companyId   String
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  workOrderId String?
+  workOrder   WorkOrder?    @relation(fields: [workOrderId], references: [id])
+  channel     CommChannel
+  direction   CommDirection
+  status      CommStatus    @default(QUEUED)
+  subject     String?
+  body        String
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  @@index([companyId, customerId])
+}
+
+// ─────────────────────────────────────
+// INTEGRATIONS
+// ─────────────────────────────────────
+
+model Integration {
+  id        String            @id @default(cuid())
+  companyId String
+  company   Company           @relation(fields: [companyId], references: [id])
+  type      IntegrationType
+  status    IntegrationStatus @default(DISCONNECTED)
+
+  accessToken  String?
+  refreshToken String?
+  tokenExpiry  DateTime?
+  realmId      String?
+  metadata     Json?
+
+  lastSyncAt   DateTime?
+  lastSyncError String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, type])
+}

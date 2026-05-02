@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=@primeair/hub",
+  "installCommand": "cd ../.. && pnpm install",
+  "outputDirectory": ".next",
+  "framework": "nextjs"
+}
