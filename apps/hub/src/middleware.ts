@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
-const PUBLIC_PATHS = ["/login", "/api/auth"];
+const PUBLIC_PATHS = ["/login", "/api/auth", "/api/health"];
 const PUBLIC_EXTENSIONS = [".jpg", ".jpeg", ".png", ".svg", ".webp", ".ico"];
 
 export default auth((req) => {
