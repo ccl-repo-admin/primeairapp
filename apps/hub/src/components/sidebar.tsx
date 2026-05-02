@@ -14,6 +14,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  ShoppingCart,
+  Upload,
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +28,12 @@ const navItems = [
     ],
   },
   { href: "/work-orders", label: "Work Orders", icon: ClipboardList },
+  {
+    href: "/purchase-orders", label: "Purchase Orders", icon: ShoppingCart,
+    children: [
+      { href: "/purchase-orders/import", label: "Import POs", icon: Upload },
+    ],
+  },
   { href: "/dispatch",    label: "Dispatch",    icon: MapPin },
   { href: "/customers",   label: "Customers",   icon: FileText },
   { href: "/reports",     label: "Reports",     icon: BarChart3 },
