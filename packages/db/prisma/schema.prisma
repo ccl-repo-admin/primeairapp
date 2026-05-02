@@ -218,6 +218,14 @@ enum POStatus {
   CANCELLED
 }
 
+enum POFinancialStatus {
+  UNPAID
+  INVOICED
+  PARTIALLY_PAID
+  PAID
+  VOID
+}
+
 enum TaskStatus {
   TODO
   IN_PROGRESS
@@ -350,6 +358,9 @@ model User {
   uploadedPhotos    WorkOrderPhoto[]      @relation("PhotoUploader")
   authoredNotes     WorkOrderNote[]       @relation("NoteAuthor")
   submittedPartRequests WorkOrderPartRequest[] @relation("PartRequester")
+  poAssignments         PurchaseOrderAssignment[]
+  poAssignedBy          PurchaseOrderAssignment[] @relation("POAssignedBy")
+  poNotes               PurchaseOrderNote[]       @relation("PONoteAuthor")
 
   @@unique([companyId, email])
   @@unique([companyId, phone])
@@ -555,27 +566,56 @@ model TimeOffRequest {
 // ─────────────────────────────────────
 
 model PurchaseOrder {
-  id          String    @id @default(cuid())
-  companyId   String
-  company     Company   @relation(fields: [companyId], references: [id])
-  number      String
-  description String?
-  customerId  String?
-  customer    Customer? @relation(fields: [customerId], references: [id])
-  status      POStatus  @default(OPEN)
-  issuedAt    DateTime?
-  dueAt       DateTime?
-  amount      Decimal?  @db.Decimal(10, 2)
-  fileUrl     String?
-  notes       String?
+  id              String             @id @default(cuid())
+  companyId       String
+  company         Company            @relation(fields: [companyId], references: [id])
+  number          String
+  description     String?
+  customerId      String?
+  customer        Customer?          @relation(fields: [customerId], references: [id])
+  status          POStatus           @default(OPEN)
+  financialStatus POFinancialStatus  @default(UNPAID)
+  issuedAt        DateTime?
+  dueAt           DateTime?
+  amount          Decimal?           @db.Decimal(10, 2)
+  amountSpent     Decimal?           @db.Decimal(10, 2)
+  fileUrl         String?
+  notes           String?
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   timeEntries TimeEntry[]
+  assignments PurchaseOrderAssignment[]
+  noteHistory PurchaseOrderNote[]
 
   @@unique([companyId, number])
   @@index([companyId, status])
+  @@index([companyId, financialStatus])
+}
+
+model PurchaseOrderAssignment {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  assignedById    String
+  assignedBy      User          @relation("POAssignedBy", fields: [assignedById], references: [id])
+  assignedAt      DateTime      @default(now())
+
+  @@unique([purchaseOrderId, userId])
+}
+
+model PurchaseOrderNote {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  authorId        String
+  author          User          @relation("PONoteAuthor", fields: [authorId], references: [id])
+  content         String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 // ─────────────────────────────────────

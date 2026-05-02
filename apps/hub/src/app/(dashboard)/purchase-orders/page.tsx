@@ -114,8 +114,9 @@ export default function PurchaseOrdersPage() {
                 const customerName = po.customer?.companyName
                   ?? (po.customer ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim() : "—");
                 return (
-                  <TableRow key={po.id} className="hover:bg-gray-50">
-                    <TableCell className="font-semibold text-primary">{po.number}</TableCell>
+                  <TableRow key={po.id} className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => window.location.href = `/purchase-orders/${po.id}`}>
+                    <TableCell className="font-semibold text-primary hover:underline">{po.number}</TableCell>
                     <TableCell className="max-w-xs truncate text-gray-700">{po.description ?? "—"}</TableCell>
                     <TableCell className="text-gray-600">{customerName}</TableCell>
                     <TableCell className="text-gray-600 whitespace-nowrap">
@@ -127,7 +128,7 @@ export default function PurchaseOrdersPage() {
                     <TableCell>
                       <span className="text-sm text-gray-500">{po._count.timeEntries}</span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       <Select
                         value={po.status}
                         onValueChange={(v) => updateStatus.mutate({ id: po.id, status: v as POStatus })}

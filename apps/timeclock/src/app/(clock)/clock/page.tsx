@@ -113,9 +113,17 @@ function POPicker({
 function ManualLocationForm({
   onSubmit,
   isPending,
+  openPOs,
+  selectedPoId,
+  onPoSelect,
+  requiresPO,
 }: {
   onSubmit: (address: string, photoUrl?: string) => void;
   isPending: boolean;
+  openPOs?: POItem[];
+  selectedPoId: string | null;
+  onPoSelect: (id: string) => void;
+  requiresPO: boolean;
 }) {
   const [address, setAddress] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | undefined>();
@@ -147,12 +155,39 @@ function ManualLocationForm({
     }
   }
 
+  const canSubmit = address.trim() && (!requiresPO || !!selectedPoId);
+  const selectedPO = openPOs?.find(p => p.id === selectedPoId);
+
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl p-5 space-y-4 text-left shadow-sm">
       <div>
         <p className="font-semibold text-gray-800 text-sm">Manual Location Check-In</p>
         <p className="text-xs text-gray-500 mt-0.5">Enter your address and optionally upload a photo of a nearby street sign or landmark.</p>
       </div>
+
+      {/* PO selection inside manual form */}
+      {openPOs !== undefined && (
+        <div className="border-b pb-4">
+          {selectedPO ? (
+            <div className="flex items-center justify-between px-3 py-2.5 bg-primary/5 border-2 border-primary rounded-xl">
+              <div>
+                <p className="text-xs font-semibold text-primary uppercase tracking-wide">Selected Job</p>
+                <p className="font-semibold text-gray-900 text-sm">PO #{selectedPO.number}</p>
+                {selectedPO.description && <p className="text-xs text-gray-500 truncate">{selectedPO.description}</p>}
+              </div>
+              <button type="button" onClick={() => onPoSelect("")}
+                className="text-xs text-gray-400 underline underline-offset-2 shrink-0 ml-3">
+                Change
+              </button>
+            </div>
+          ) : (
+            <POPicker pos={openPOs} selected={selectedPoId} onSelect={onPoSelect} />
+          )}
+          {requiresPO && !selectedPoId && (
+            <p className="text-xs text-amber-600 mt-2">⚠ You must select a job before clocking in.</p>
+          )}
+        </div>
+      )}
 
       <div className="space-y-1">
         <label className="text-xs font-medium text-gray-700">Your current address or location</label>
@@ -195,8 +230,8 @@ function ManualLocationForm({
       </div>
 
       <button
-        onClick={() => { if (address.trim()) onSubmit(address.trim(), photoUrl); }}
-        disabled={!address.trim() || isPending || uploading}
+        onClick={() => { if (canSubmit) onSubmit(address.trim(), photoUrl); }}
+        disabled={!canSubmit || isPending || uploading}
         className="w-full py-3 bg-primary text-white font-semibold rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-all"
       >
         {isPending ? "Clocking in..." : "Clock In with Manual Location"}
@@ -460,16 +495,23 @@ export default function ClockPage() {
       )}
 
       {/* Location gate — shown when not yet ready */}
-      {poReady && !locationReady && !showManual && (
+      {!locationReady && !showManual && (
         <div className="mb-8 w-full max-w-sm">
           <LocationGate state={state} onRetry={request} showManual={showManual} onShowManual={() => setShowManual(true)} />
         </div>
       )}
 
       {/* Manual location form */}
-      {poReady && showManual && !locationReady && (
+      {showManual && !locationReady && (
         <div className="mb-8 w-full max-w-sm">
-          <ManualLocationForm onSubmit={handleManualClockIn} isPending={clockIn.isPending} />
+          <ManualLocationForm
+            onSubmit={handleManualClockIn}
+            isPending={clockIn.isPending}
+            openPOs={modules?.purchaseOrders ? (openPOs ?? []) : undefined}
+            selectedPoId={selectedPoId}
+            onPoSelect={(id) => setSelectedPoId(id || null)}
+            requiresPO={requiresPO}
+          />
           <button onClick={() => setShowManual(false)} className="mt-3 text-xs text-gray-400 underline underline-offset-2">
             Try GPS again instead
           </button>
@@ -477,7 +519,7 @@ export default function ClockPage() {
       )}
 
       {/* Location confirmed banner */}
-      {poReady && locationReady && (
+      {locationReady && (
         <div className="mb-8 flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm text-green-700">
           <Navigation className="h-4 w-4 text-green-500 shrink-0" />
           <span className="font-medium">Location confirmed</span>
@@ -486,10 +528,10 @@ export default function ClockPage() {
       )}
 
       {/* Clock In button */}
-      {poReady && !showManual && (
+      {!showManual && (
         <button
           onClick={handleClockIn}
-          disabled={!locationReady || clockIn.isPending}
+          disabled={!locationReady || !poReady || clockIn.isPending}
           className={`w-52 h-52 rounded-full text-white text-2xl font-bold shadow-2xl transition-all flex flex-col items-center justify-center gap-2
             ${locationReady
               ? "bg-primary hover:bg-primary/90 active:scale-95 shadow-primary/30"
@@ -530,7 +572,7 @@ export default function ClockPage() {
         </p>
       )}
 
-      {poReady && !locationReady && !showManual && state.status !== "requesting" && (
+      {!locationReady && !showManual && state.status !== "requesting" && (
         <p className="mt-6 text-xs text-gray-400">
           Precise GPS location is required to clock in
         </p>
