@@ -15,6 +15,7 @@ packages/db/node_modules/.prisma/
 .env
 .env.local
 .env.*.local
+CREDENTIALS.txt
 
 # OS / Editor
 .DS_Store
