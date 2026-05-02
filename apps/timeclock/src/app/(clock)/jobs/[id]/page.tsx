@@ -142,7 +142,7 @@ export default function JobDetailPage() {
   const transitions = TECH_TRANSITIONS[wo.status] ?? [];
   const photoCount = wo.photos?.length ?? 0;
   const noteCount = wo.notes?.length ?? 0;
-  const pendingParts = wo.partRequests?.filter(r => r.status === "REQUESTED" || r.status === "ORDERED").length ?? 0;
+  const pendingParts = wo.partRequests?.filter((r: { status: string }) => r.status === "REQUESTED" || r.status === "ORDERED").length ?? 0;
   const checkTotal = wo.checklists?.reduce((s, c) => s + c.items.length, 0) ?? 0;
   const checkDone = wo.checklists?.reduce((s, c) => s + c.items.filter(i => i.isComplete).length, 0) ?? 0;
 
