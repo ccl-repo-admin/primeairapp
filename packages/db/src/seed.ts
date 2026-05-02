@@ -469,6 +469,89 @@ async function main() {
   const [henderson, gonzalez, kim, blake, torres, chen, okonkwo, reyesDental] = customers as [CreatedCustomer, CreatedCustomer, CreatedCustomer, CreatedCustomer, CreatedCustomer, CreatedCustomer, CreatedCustomer, CreatedCustomer];
   console.log("Customers created.");
 
+  // ── Purchase Orders ──────────────────────────────────────────
+  const poData = [
+    {
+      id: "seed-po-1",
+      number: "PO-2025-001",
+      description: "Quarterly Preventive Maintenance — Kim Properties (Spring 2025)",
+      customerId: kim.id,
+      status: "OPEN" as const,
+      issuedAt: new Date("2025-01-01"),
+      dueAt: new Date("2025-06-30"),
+      amount: 5200.00,
+      notes: "4 units at 2200 S Congress + 2 units at 5400 Burnet Rd. Covers Q1/Q2 2025.",
+    },
+    {
+      id: "seed-po-2",
+      number: "PO-2025-002",
+      description: "Annual HVAC Service Contract — Reyes Dental",
+      customerId: reyesDental.id,
+      status: "OPEN" as const,
+      issuedAt: new Date("2025-01-15"),
+      dueAt: new Date("2025-12-31"),
+      amount: 3600.00,
+      notes: "Critical priority — dental office cannot experience downtime. Includes emergency call coverage.",
+    },
+    {
+      id: "seed-po-3",
+      number: "PO-2025-003",
+      description: "Commercial HVAC Repair & Service — Torres Auto Repair",
+      customerId: torres.id,
+      status: "OPEN" as const,
+      issuedAt: new Date("2025-03-01"),
+      dueAt: new Date("2025-09-30"),
+      amount: 2500.00,
+      notes: "Shop requires strong cooling capacity. After-hours available for emergency.",
+    },
+    {
+      id: "seed-po-4",
+      number: "PO-2025-004",
+      description: "Residential Service Calls — Henderson",
+      customerId: henderson.id,
+      status: "OPEN" as const,
+      issuedAt: new Date("2025-02-01"),
+      dueAt: new Date("2025-12-31"),
+      amount: 1200.00,
+      notes: "Blanket PO for annual maintenance and any service calls at 4201 Duval St.",
+    },
+    {
+      id: "seed-po-5",
+      number: "PO-2025-005",
+      description: "General Field Service — Miscellaneous Jobs",
+      customerId: null,
+      status: "OPEN" as const,
+      issuedAt: new Date("2025-01-01"),
+      dueAt: new Date("2025-12-31"),
+      amount: 10000.00,
+      notes: "Catch-all PO for non-contracted service calls and small jobs without a specific customer PO.",
+    },
+    {
+      id: "seed-po-6",
+      number: "PO-2024-008",
+      description: "Quarterly PM — Kim Properties (Q4 2024)",
+      customerId: kim.id,
+      status: "COMPLETE" as const,
+      issuedAt: new Date("2024-10-01"),
+      dueAt: new Date("2024-12-31"),
+      amount: 4800.00,
+      notes: "Completed Q4 2024 preventive maintenance cycle.",
+    },
+  ];
+
+  for (const po of poData) {
+    await prisma.purchaseOrder.upsert({
+      where: { id: po.id },
+      update: {},
+      create: {
+        ...po,
+        companyId: company.id,
+        customerId: po.customerId ?? undefined,
+      },
+    });
+  }
+  console.log("Purchase orders created.");
+
   // ── Service Addresses ────────────────────────────────────────
   const addrData = [
     { id: "seed-addr-1",  customerId: henderson.id,   label: "Home",       line1: "4201 Duval St",          city: "Austin", state: "TX", zip: "78751", lat: 30.312, lng: -97.726, isPrimary: true },
