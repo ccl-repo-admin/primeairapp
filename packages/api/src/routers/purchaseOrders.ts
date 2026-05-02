@@ -12,6 +12,41 @@ const poImportRowSchema = z.object({
 });
 
 export const purchaseOrdersRouter = createTRPCRouter({
+  create: dispatcherProcedure
+    .input(z.object({
+      number: z.string().min(1),
+      description: z.string().optional().nullable(),
+      customerId: z.string().optional().nullable(),
+      dueAt: z.string().optional().nullable(),
+      amount: z.coerce.number().optional().nullable(),
+      notes: z.string().optional().nullable(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const existing = await ctx.db.purchaseOrder.findFirst({
+        where: { companyId: ctx.companyId!, number: input.number },
+      });
+      if (existing) throw new TRPCError({ code: "CONFLICT", message: `PO number "${input.number}" already exists` });
+
+      let dueAt: Date | null = null;
+      if (input.dueAt) {
+        const d = new Date(input.dueAt);
+        if (!isNaN(d.getTime())) dueAt = d;
+      }
+
+      return ctx.db.purchaseOrder.create({
+        data: {
+          companyId: ctx.companyId!,
+          number: input.number,
+          description: input.description ?? null,
+          notes: input.notes ?? null,
+          customerId: input.customerId ?? null,
+          dueAt,
+          amount: input.amount ?? null,
+          status: "OPEN",
+        },
+      });
+    }),
+
   list: dispatcherProcedure
     .input(z.object({
       status: z.enum(["OPEN", "IN_PROGRESS", "COMPLETE", "CANCELLED"]).optional(),

@@ -7,7 +7,7 @@ import {
   TableHeader, TableRow, Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@primeair/ui";
-import { Upload, ShoppingCart, CheckCircle2, Clock, XCircle, PlayCircle } from "lucide-react";
+import { Upload, ShoppingCart, CheckCircle2, Clock, XCircle, PlayCircle, Plus } from "lucide-react";
 
 const STATUS_CONFIG = {
   OPEN:        { label: "Open",        color: "bg-blue-100 text-blue-700",   icon: Clock },
@@ -49,12 +49,20 @@ export default function PurchaseOrdersPage() {
             {pos?.length ?? 0} total · {pos?.filter(p => p.status === "OPEN").length ?? 0} open
           </p>
         </div>
-        <Link href="/purchase-orders/import">
-          <Button>
-            <Upload className="h-4 w-4 mr-1.5" />
-            Import POs
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/purchase-orders/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-1.5" />
+              New PO
+            </Button>
+          </Link>
+          <Link href="/purchase-orders/import">
+            <Button variant="outline">
+              <Upload className="h-4 w-4 mr-1.5" />
+              Import CSV
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Filter */}

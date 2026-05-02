@@ -3,6 +3,7 @@ export { Button, buttonVariants } from "./components/button";
 export { Badge, badgeVariants } from "./components/badge";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/card";
 export { Input } from "./components/input";
+export { Textarea } from "./components/textarea";
 export { Label } from "./components/label";
 export { Avatar, AvatarFallback, AvatarImage } from "./components/avatar";
 export { Separator } from "./components/separator";
