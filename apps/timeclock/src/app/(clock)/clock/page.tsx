@@ -26,19 +26,28 @@ function ManualLocationForm({
   const [address, setAddress] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | undefined>();
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError(false);
     try {
       const compressed = await compressImage(file);
       const fd = new FormData();
       fd.append("file", compressed);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) throw new Error("Upload failed");
       const data = await res.json() as { url?: string };
       if (data.url) setPhotoUrl(data.url);
+      else throw new Error("No URL");
+    } catch {
+      setUploadError(true);
     } finally {
       setUploading(false);
     }
@@ -63,8 +72,9 @@ function ManualLocationForm({
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-medium text-gray-700">Photo proof (optional but recommended)</label>
-        <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhoto} />
+        <label className="text-xs font-medium text-gray-700">Photo proof <span className="text-gray-400">(optional)</span></label>
+        {mounted && <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhoto} />}
+        {uploadError && <p className="text-xs text-amber-600">Photo upload unavailable — you can still clock in with your address only.</p>}
         {photoUrl ? (
           <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
