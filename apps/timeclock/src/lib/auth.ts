@@ -26,6 +26,7 @@ export async function sendOtp(phone: string) {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
   providers: [
     Credentials({
       id: "otp",

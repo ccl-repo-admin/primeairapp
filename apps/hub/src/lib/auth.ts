@@ -6,6 +6,7 @@ import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
@@ -13,16 +14,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        console.log("[auth] authorize called", { email: credentials?.email });
+        if (!credentials?.email || !credentials?.password) {
+          console.log("[auth] missing credentials");
+          return null;
+        }
 
         const user = await prisma.user.findFirst({
           where: { email: String(credentials.email), isActive: true },
           include: { role: true },
         });
+        console.log("[auth] user found:", !!user, "hubAccess:", user?.role?.hubAccess);
         if (!user?.passwordHash) return null;
         if (!user.role.hubAccess) return null;
 
         const valid = await bcrypt.compare(String(credentials.password), user.passwordHash);
+        console.log("[auth] password valid:", valid);
         if (!valid) return null;
 
         return {
