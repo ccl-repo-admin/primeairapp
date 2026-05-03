@@ -18,6 +18,9 @@ import {
   Upload,
 } from "lucide-react";
 
+const COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME ?? "ClockHQ";
+const LOGO_URL = process.env.NEXT_PUBLIC_COMPANY_LOGO_URL ?? null;
+
 const navItems = [
   { href: "/dashboard",   label: "Dashboard",   icon: LayoutDashboard },
   { href: "/team",        label: "Team",        icon: Users },
@@ -47,14 +50,16 @@ export function Sidebar() {
     <aside className="w-60 shrink-0 border-r bg-[#1B3A6B] min-h-screen flex flex-col">
       <div className="px-4 py-4 border-b border-white/10">
         <Link href="/dashboard" className="block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo-462w.jpg"
-            alt="Prime Air Condition"
-            width={160}
-            height={56}
-            className="rounded object-contain"
-          />
+          {LOGO_URL ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={LOGO_URL}
+              alt={COMPANY_NAME}
+              className="h-9 w-auto object-contain object-left"
+            />
+          ) : (
+            <span className="text-white font-bold text-xl tracking-tight">{COMPANY_NAME}</span>
+          )}
         </Link>
         <p className="text-white/50 text-xs mt-1.5 px-0.5">Hub</p>
       </div>

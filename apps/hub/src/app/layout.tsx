@@ -5,9 +5,11 @@ import { Providers } from "@/providers/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const companyName = process.env.NEXT_PUBLIC_COMPANY_NAME ?? "ClockHQ";
+
 export const metadata: Metadata = {
-  title: "Prime Air — Hub",
-  description: "HVAC Field Service Management",
+  title: `${companyName} — Hub`,
+  description: `Field service management for ${companyName}`,
   manifest: "/manifest.json",
 };
 

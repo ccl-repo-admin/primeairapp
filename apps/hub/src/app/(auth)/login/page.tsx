@@ -4,6 +4,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@primeair/ui";
 
+const COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME ?? "ClockHQ";
+const LOGO_URL = process.env.NEXT_PUBLIC_COMPANY_LOGO_URL ?? null;
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -34,9 +37,18 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1B3A6B] to-[#0891B2]">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
-          <div className="text-3xl font-bold text-primary mb-1">Prime Air</div>
+          {LOGO_URL ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={LOGO_URL}
+              alt={COMPANY_NAME}
+              className="h-14 w-auto mx-auto mb-2 object-contain"
+            />
+          ) : (
+            <div className="text-3xl font-bold text-primary mb-1">{COMPANY_NAME}</div>
+          )}
           <CardTitle className="text-xl">Hub Login</CardTitle>
-          <CardDescription>Sign in to manage your HVAC team</CardDescription>
+          <CardDescription>Sign in to manage your team</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
