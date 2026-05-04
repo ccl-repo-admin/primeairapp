@@ -37,7 +37,16 @@ export const timeclockRouter = createTRPCRouter({
   listOpenPOs: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.purchaseOrder.findMany({
       where: { companyId: ctx.companyId!, status: "OPEN" },
-      select: { id: true, number: true, description: true, customer: { select: { firstName: true, lastName: true, companyName: true } }, dueAt: true, amount: true },
+      select: {
+        id: true,
+        number: true,
+        description: true,
+        customerName: true,
+        address: true,
+        customer: { select: { firstName: true, lastName: true, companyName: true } },
+        dueAt: true,
+        amount: true,
+      },
       orderBy: { number: "asc" },
     });
   }),

@@ -5,12 +5,55 @@ import { createTRPCRouter, dispatcherProcedure } from "../trpc";
 const CLOSEABLE_FINANCIAL = ["PAID", "VOID"];
 const CANCELLABLE_FINANCIAL = ["UNPAID", "VOID"];
 
+function parseCurrency(val: string | null | undefined): number | null {
+  if (!val) return null;
+  const n = parseFloat(val.replace(/[$,\s]/g, ""));
+  return isNaN(n) ? null : n;
+}
+
+function parseDate(val: string | null | undefined): Date | null {
+  if (!val || !val.trim()) return null;
+  const d = new Date(val.trim());
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function parseBool(val: string | null | undefined): boolean | null {
+  if (!val) return null;
+  const v = val.trim().toLowerCase();
+  if (v === "yes" || v === "y" || v === "true") return true;
+  if (v === "no" || v === "n" || v === "false") return false;
+  return null;
+}
+
 const poImportRowSchema = z.object({
   number: z.string().min(1),
+  jobType: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   customerName: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  salesperson: z.string().optional().nullable(),
+  gcName: z.string().optional().nullable(),
+  billedPercent: z.string().optional().nullable(),
+  amount: z.string().optional().nullable(),
+  amountDue: z.string().optional().nullable(),
   dueAt: z.string().optional().nullable(),
-  amount: z.coerce.number().optional().nullable(),
+  permitNumber: z.string().optional().nullable(),
+  permitJurisdiction: z.string().optional().nullable(),
+  permitStatus: z.string().optional().nullable(),
+  permitExpDate: z.string().optional().nullable(),
+  nocRequired: z.string().optional().nullable(),
+  installDate: z.string().optional().nullable(),
+  startupDate: z.string().optional().nullable(),
+  inspectionStatus: z.string().optional().nullable(),
+  inspectionScheduledDate: z.string().optional().nullable(),
+  extendedWarranty: z.string().optional().nullable(),
+  registeredDate: z.string().optional().nullable(),
+  redYellowTag: z.string().optional().nullable(),
+  reinspection: z.string().optional().nullable(),
+  rma: z.string().optional().nullable(),
+  nto: z.string().optional().nullable(),
+  firstDayOnJob: z.string().optional().nullable(),
+  lastDayOnJob: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
 
@@ -88,12 +131,14 @@ export const purchaseOrdersRouter = createTRPCRouter({
   list: dispatcherProcedure
     .input(z.object({
       status: z.enum(["OPEN", "IN_PROGRESS", "COMPLETE", "CANCELLED"]).optional(),
+      jobType: z.enum(["RESIDENTIAL", "COMMERCIAL"]).optional(),
     }).optional())
     .query(async ({ ctx, input }) => {
       return ctx.db.purchaseOrder.findMany({
         where: {
           companyId: ctx.companyId!,
           ...(input?.status ? { status: input.status } : {}),
+          ...(input?.jobType ? { jobType: input.jobType } : {}),
         },
         include: {
           customer: { select: { id: true, firstName: true, lastName: true, companyName: true } },
@@ -297,20 +342,38 @@ export const purchaseOrdersRouter = createTRPCRouter({
           });
           if (existing) { skipped++; continue; }
 
-          let dueAt: Date | null = null;
-          if (row.dueAt) {
-            const d = new Date(row.dueAt);
-            if (!isNaN(d.getTime())) dueAt = d;
-          }
-
           await ctx.db.purchaseOrder.create({
             data: {
               companyId: ctx.companyId!,
               number: row.number,
+              jobType: row.jobType ?? null,
               description: row.description ?? null,
+              customerName: row.customerName ?? null,
+              address: row.address ?? null,
+              salesperson: row.salesperson ?? null,
+              gcName: row.gcName ?? null,
+              billedPercent: row.billedPercent ?? null,
+              amount: parseCurrency(row.amount),
+              amountDue: parseCurrency(row.amountDue),
+              dueAt: parseDate(row.dueAt),
+              permitNumber: row.permitNumber ?? null,
+              permitJurisdiction: row.permitJurisdiction ?? null,
+              permitStatus: row.permitStatus ?? null,
+              permitExpDate: parseDate(row.permitExpDate),
+              nocRequired: parseBool(row.nocRequired),
+              installDate: parseDate(row.installDate),
+              startupDate: parseDate(row.startupDate),
+              inspectionStatus: row.inspectionStatus ?? null,
+              inspectionScheduledDate: parseDate(row.inspectionScheduledDate),
+              extendedWarranty: parseBool(row.extendedWarranty),
+              registeredDate: parseDate(row.registeredDate),
+              redYellowTag: row.redYellowTag ?? null,
+              reinspection: parseBool(row.reinspection),
+              rma: row.rma ?? null,
+              nto: row.nto ?? null,
+              firstDayOnJob: parseDate(row.firstDayOnJob),
+              lastDayOnJob: parseDate(row.lastDayOnJob),
               notes: row.notes ?? null,
-              dueAt,
-              amount: row.amount ?? null,
               status: "OPEN",
             },
           });

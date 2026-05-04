@@ -7,7 +7,7 @@ import {
   TableHeader, TableRow, Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@primeair/ui";
-import { Upload, ShoppingCart, CheckCircle2, Clock, XCircle, PlayCircle, Plus } from "lucide-react";
+import { Upload, ShoppingCart, CheckCircle2, Clock, XCircle, PlayCircle, Plus, Building2, Home } from "lucide-react";
 
 const STATUS_CONFIG = {
   OPEN:        { label: "Open",        color: "bg-blue-100 text-blue-700",   icon: Clock },
@@ -17,13 +17,16 @@ const STATUS_CONFIG = {
 } as const;
 
 type POStatus = keyof typeof STATUS_CONFIG;
+type JobType = "RESIDENTIAL" | "COMMERCIAL";
 
 export default function PurchaseOrdersPage() {
   const [statusFilter, setStatusFilter] = useState<POStatus | "ALL">("ALL");
+  const [typeFilter, setTypeFilter] = useState<JobType | "ALL">("ALL");
 
-  const { data: pos, isLoading, refetch } = trpc.purchaseOrders.list.useQuery(
-    statusFilter !== "ALL" ? { status: statusFilter } : {}
-  );
+  const { data: pos, isLoading, refetch } = trpc.purchaseOrders.list.useQuery({
+    ...(statusFilter !== "ALL" ? { status: statusFilter } : {}),
+    ...(typeFilter !== "ALL" ? { jobType: typeFilter } : {}),
+  });
 
   const updateStatus = trpc.purchaseOrders.updateStatus.useMutation({
     onSuccess: () => void refetch(),
@@ -43,7 +46,7 @@ export default function PurchaseOrdersPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <ShoppingCart className="h-6 w-6 text-primary" />
-            Purchase Orders
+            Job List
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {pos?.length ?? 0} total · {pos?.filter(p => p.status === "OPEN").length ?? 0} open
@@ -53,7 +56,7 @@ export default function PurchaseOrdersPage() {
           <Link href="/purchase-orders/new">
             <Button>
               <Plus className="h-4 w-4 mr-1.5" />
-              New PO
+              New Job
             </Button>
           </Link>
           <Link href="/purchase-orders/import">
@@ -65,7 +68,7 @@ export default function PurchaseOrdersPage() {
         </div>
       </div>
 
-      {/* Filter */}
+      {/* Filters */}
       <div className="flex items-center gap-3">
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as POStatus | "ALL")}>
           <SelectTrigger className="w-44">
@@ -79,29 +82,48 @@ export default function PurchaseOrdersPage() {
             <SelectItem value="CANCELLED">Cancelled</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as JobType | "ALL")}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Types</SelectItem>
+            <SelectItem value="COMMERCIAL">Commercial</SelectItem>
+            <SelectItem value="RESIDENTIAL">Residential</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
       {!pos || pos.length === 0 ? (
         <div className="border-2 border-dashed border-gray-200 rounded-xl p-12 text-center">
           <ShoppingCart className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-          <p className="font-medium text-gray-500">No purchase orders yet</p>
-          <p className="text-sm text-gray-400 mt-1">Import a CSV to get started</p>
-          <Link href="/purchase-orders/import" className="mt-4 inline-block">
-            <Button variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-1.5" />
-              Import POs
-            </Button>
-          </Link>
+          <p className="font-medium text-gray-500">No jobs found</p>
+          <p className="text-sm text-gray-400 mt-1">Import a CSV or create a job manually</p>
+          <div className="flex gap-2 justify-center mt-4">
+            <Link href="/purchase-orders/import">
+              <Button variant="outline" size="sm">
+                <Upload className="h-4 w-4 mr-1.5" />
+                Import CSV
+              </Button>
+            </Link>
+            <Link href="/purchase-orders/new">
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-1.5" />
+                New Job
+              </Button>
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="border rounded-xl overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead>PO Number</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Customer</TableHead>
+                <TableHead className="w-16">Type</TableHead>
+                <TableHead>Job #</TableHead>
+                <TableHead>Name / Description</TableHead>
+                <TableHead>Address</TableHead>
                 <TableHead>Due Date</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Shifts</TableHead>
@@ -111,14 +133,33 @@ export default function PurchaseOrdersPage() {
             <TableBody>
               {pos.map((po) => {
                 const cfg = STATUS_CONFIG[po.status as POStatus] ?? STATUS_CONFIG.OPEN;
-                const customerName = po.customer?.companyName
-                  ?? (po.customer ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim() : "—");
+                const displayName = (po as unknown as { customerName?: string }).customerName
+                  ?? po.customer?.companyName
+                  ?? (po.customer ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim() : null)
+                  ?? po.description
+                  ?? "—";
+                const poWithFields = po as unknown as { jobType?: string; address?: string; customerName?: string };
                 return (
                   <TableRow key={po.id} className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => window.location.href = `/purchase-orders/${po.id}`}>
-                    <TableCell className="font-semibold text-primary hover:underline">{po.number}</TableCell>
-                    <TableCell className="max-w-xs truncate text-gray-700">{po.description ?? "—"}</TableCell>
-                    <TableCell className="text-gray-600">{customerName}</TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
+                      {poWithFields.jobType === "COMMERCIAL" ? (
+                        <Badge className="bg-blue-100 text-blue-700 border-0 gap-1 text-xs px-1.5">
+                          <Building2 className="h-3 w-3" />COM
+                        </Badge>
+                      ) : poWithFields.jobType === "RESIDENTIAL" ? (
+                        <Badge className="bg-green-100 text-green-700 border-0 gap-1 text-xs px-1.5">
+                          <Home className="h-3 w-3" />RES
+                        </Badge>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="font-semibold text-primary">{po.number}</TableCell>
+                    <TableCell className="max-w-[200px] truncate text-gray-700">{displayName}</TableCell>
+                    <TableCell className="max-w-[180px] truncate text-gray-500 text-xs">
+                      {poWithFields.address ?? "—"}
+                    </TableCell>
                     <TableCell className="text-gray-600 whitespace-nowrap">
                       {po.dueAt ? new Date(po.dueAt).toLocaleDateString() : "—"}
                     </TableCell>

@@ -20,6 +20,8 @@ type POItem = {
   id: string;
   number: string;
   description: string | null;
+  address: string | null;
+  customerName: string | null;
   customer: { firstName: string; lastName: string | null; companyName: string | null } | null;
   dueAt: Date | null;
   amount: unknown;
@@ -39,6 +41,8 @@ function POPicker({
     const q = search.toLowerCase();
     return (
       p.number.toLowerCase().includes(q) ||
+      (p.address ?? "").toLowerCase().includes(q) ||
+      (p.customerName ?? "").toLowerCase().includes(q) ||
       (p.description ?? "").toLowerCase().includes(q) ||
       (p.customer?.companyName ?? "").toLowerCase().includes(q) ||
       (`${p.customer?.firstName ?? ""} ${p.customer?.lastName ?? ""}`).toLowerCase().includes(q)
@@ -59,7 +63,7 @@ function POPicker({
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by PO #, customer, or description..."
+        placeholder="Search by job #, address, or name…"
         className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
       />
 
@@ -72,11 +76,12 @@ function POPicker({
       ) : (
         <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
           {filtered.map((po) => {
-            const customerName = po.customer?.companyName
-              ? po.customer.companyName
-              : po.customer
-              ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim()
-              : null;
+            const displayName = po.customerName
+              ?? (po.customer?.companyName
+                ? po.customer.companyName
+                : po.customer
+                ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim()
+                : null);
             const isSelected = selected === po.id;
             return (
               <button
@@ -90,9 +95,16 @@ function POPicker({
                 }`}
               >
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm text-gray-900">PO #{po.number}</p>
-                  {po.description && <p className="text-xs text-gray-500 truncate">{po.description}</p>}
-                  {customerName && <p className="text-xs text-gray-400 truncate">{customerName}</p>}
+                  <p className="font-semibold text-sm text-gray-900">Job #{po.number}</p>
+                  {po.address && (
+                    <p className="text-xs text-gray-600 truncate mt-0.5">{po.address}</p>
+                  )}
+                  {displayName && (
+                    <p className="text-xs text-gray-400 truncate">{displayName}</p>
+                  )}
+                  {!po.address && !displayName && po.description && (
+                    <p className="text-xs text-gray-500 truncate">{po.description}</p>
+                  )}
                 </div>
                 {isSelected ? (
                   <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />

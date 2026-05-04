@@ -12,6 +12,7 @@ import {
 import {
   ArrowLeft, Edit2, Check, X, UserPlus, Trash2,
   DollarSign, Clock, AlertTriangle, MessageSquare, Users,
+  MapPin, Building2, Home, ChevronDown, ChevronUp,
 } from "lucide-react";
 
 const STATUS_CONFIG = {
@@ -72,12 +73,23 @@ function InlineEdit({ label, value, onSave, type = "text", placeholder = "" }: {
   );
 }
 
+function DetailField({ label, value }: { label: string; value: string | null | undefined }) {
+  if (!value) return null;
+  return (
+    <div className="space-y-0.5">
+      <p className="text-xs text-gray-400">{label}</p>
+      <p className="text-sm text-gray-800 font-medium">{value}</p>
+    </div>
+  );
+}
+
 export default function PODetailPage() {
   const { id } = useParams<{ id: string }>();
   const utils = trpc.useUtils();
   const [noteText, setNoteText] = useState("");
   const [assignSearch, setAssignSearch] = useState("");
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [jobDetailsOpen, setJobDetailsOpen] = useState(true);
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: po, isLoading } = trpc.purchaseOrders.get.useQuery({ id });
@@ -103,7 +115,7 @@ export default function PODetailPage() {
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
     </div>
   );
-  if (!po) return <div className="p-6 text-gray-500">Purchase order not found.</div>;
+  if (!po) return <div className="p-6 text-gray-500">Job not found.</div>;
 
   const customerName = po.customer?.companyName
     ?? (po.customer ? `${po.customer.firstName} ${po.customer.lastName ?? ""}`.trim() : "");
@@ -215,6 +227,99 @@ export default function PODetailPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Job details (import fields) */}
+          {(po.jobType || po.address || po.customerName || po.salesperson || po.permitNumber || po.installDate) && (
+            <Card>
+              <CardHeader className="cursor-pointer select-none" onClick={() => setJobDetailsOpen(o => !o)}>
+                <CardTitle className="text-base flex items-center gap-2">
+                  {po.jobType === "COMMERCIAL" ? (
+                    <Building2 className="h-4 w-4 text-blue-500" />
+                  ) : po.jobType === "RESIDENTIAL" ? (
+                    <Home className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <MapPin className="h-4 w-4" />
+                  )}
+                  Job Details
+                  {po.jobType && (
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                      po.jobType === "COMMERCIAL" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
+                    }`}>{po.jobType === "COMMERCIAL" ? "Commercial" : "Residential"}</span>
+                  )}
+                  <span className="ml-auto">
+                    {jobDetailsOpen ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              {jobDetailsOpen && (
+                <CardContent className="space-y-5">
+                  {/* Job Info */}
+                  {(po.customerName || po.address || po.salesperson || po.gcName || po.billedPercent) && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Job Info</p>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                        <DetailField label="Job Name" value={po.customerName} />
+                        <DetailField label="Salesperson" value={po.salesperson} />
+                        <DetailField label="Address" value={po.address} />
+                        {po.jobType === "COMMERCIAL" && <DetailField label="General Contractor" value={po.gcName} />}
+                        {po.jobType === "COMMERCIAL" && <DetailField label="Billed %" value={po.billedPercent} />}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Permit */}
+                  {(po.permitNumber || po.permitJurisdiction || po.permitStatus || po.permitExpDate || po.nocRequired != null) && (
+                    <div className="border-t pt-4">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Permit</p>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                        <DetailField label="Permit #" value={po.permitNumber} />
+                        <DetailField label="Jurisdiction" value={po.permitJurisdiction} />
+                        <DetailField label="Status" value={po.permitStatus} />
+                        <DetailField label="Expires" value={po.permitExpDate ? new Date(po.permitExpDate).toLocaleDateString() : null} />
+                        {po.jobType === "COMMERCIAL" && po.nocRequired != null && (
+                          <DetailField label="NOC Required" value={po.nocRequired ? "Yes" : "No"} />
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scheduling */}
+                  {(po.installDate || po.startupDate || po.inspectionStatus || po.inspectionScheduledDate || po.registeredDate) && (
+                    <div className="border-t pt-4">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Scheduling</p>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                        <DetailField label="Install Date" value={po.installDate ? new Date(po.installDate).toLocaleDateString() : null} />
+                        <DetailField label="Start Up Date" value={po.startupDate ? new Date(po.startupDate).toLocaleDateString() : null} />
+                        <DetailField label="Inspection Status" value={po.inspectionStatus} />
+                        {po.jobType === "RESIDENTIAL" && (
+                          <DetailField label="Inspection Scheduled" value={po.inspectionScheduledDate ? new Date(po.inspectionScheduledDate).toLocaleDateString() : null} />
+                        )}
+                        {po.jobType === "RESIDENTIAL" && (
+                          <DetailField label="Registered" value={po.registeredDate ? new Date(po.registeredDate).toLocaleDateString() : null} />
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Other */}
+                  {(po.extendedWarranty != null || po.redYellowTag || po.rma || po.nto || po.firstDayOnJob || po.lastDayOnJob || po.reinspection != null) && (
+                    <div className="border-t pt-4">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Other</p>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                        {po.extendedWarranty != null && <DetailField label="Extended Warranty" value={po.extendedWarranty ? "Yes" : "No"} />}
+                        {po.jobType === "RESIDENTIAL" && <DetailField label="Red/Yellow Tag" value={po.redYellowTag} />}
+                        {po.jobType === "RESIDENTIAL" && <DetailField label="RMA" value={po.rma} />}
+                        {po.jobType === "RESIDENTIAL" && po.reinspection != null && <DetailField label="Re-inspection" value={po.reinspection ? "Yes" : "No"} />}
+                        {po.jobType === "COMMERCIAL" && <DetailField label="NTO" value={po.nto} />}
+                        {po.jobType === "COMMERCIAL" && <DetailField label="First Day on Job" value={po.firstDayOnJob ? new Date(po.firstDayOnJob).toLocaleDateString() : null} />}
+                        {po.jobType === "COMMERCIAL" && <DetailField label="Last Day on Job" value={po.lastDayOnJob ? new Date(po.lastDayOnJob).toLocaleDateString() : null} />}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              )}
+            </Card>
+          )}
 
           {/* Assigned workers */}
           <Card>

@@ -579,8 +579,34 @@ model PurchaseOrder {
   dueAt           DateTime?
   amount          Decimal?           @db.Decimal(10, 2)
   amountSpent     Decimal?           @db.Decimal(10, 2)
+  amountDue       Decimal?           @db.Decimal(10, 2)
   fileUrl         String?
   notes           String?
+
+  // Job list import fields
+  jobType                 String?
+  address                 String?
+  customerName            String?
+  salesperson             String?
+  gcName                  String?
+  billedPercent           String?
+  permitNumber            String?
+  permitJurisdiction      String?
+  permitStatus            String?
+  permitExpDate           DateTime?
+  nocRequired             Boolean?
+  installDate             DateTime?
+  startupDate             DateTime?
+  inspectionStatus        String?
+  inspectionScheduledDate DateTime?
+  extendedWarranty        Boolean?
+  registeredDate          DateTime?
+  redYellowTag            String?
+  reinspection            Boolean?
+  rma                     String?
+  nto                     String?
+  firstDayOnJob           DateTime?
+  lastDayOnJob            DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
